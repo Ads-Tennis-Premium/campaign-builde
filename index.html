@@ -1,0 +1,1596 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Serrano Campaign Builder v3.1</title>
+<style>
+*, *::before, *::after { box-sizing: border-box; }
+:root {
+  --white: #FFFFFF;
+  --cream: #FAFAF9;
+  --border-light: #EBE9E7;
+  --border: #D8D4D0;
+  --silver: #BBB4B1;
+  --text-soft: #8A8582;
+  --carbon: #4B4441;
+  --graphite: #333333;
+  --shadow: rgba(75, 68, 65, 0.08);
+  --danger: #B05A5A;
+  --warning: #C89A4E;
+  --success: #6B8E6B;
+  --font: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --accent-1: #C8A47E;
+  --accent-2: #8FA68E;
+  --accent-3: #A59BB5;
+  --accent-4: #B89B88;
+  --accent-5: #8FA0B5;
+}
+body { font-family: var(--font); background: var(--cream); color: var(--graphite); margin: 0; padding: 0; line-height: 1.5; -webkit-font-smoothing: antialiased; }
+.app { max-width: 860px; margin: 0 auto; min-height: 100vh; background: var(--white); border-left: 0.5px solid var(--border-light); border-right: 0.5px solid var(--border-light); }
+.header { padding: 28px 32px 22px; border-bottom: 0.5px solid var(--border-light); background: var(--cream); text-align: center; }
+.header img { height: 48px; width: auto; margin-bottom: 10px; }
+.header-title { font-size: 20px; font-weight: 400; color: var(--graphite); letter-spacing: -0.3px; margin: 0 0 4px; }
+.header-sub { font-size: 12px; color: var(--text-soft); font-weight: 300; letter-spacing: 0.3px; margin: 0; }
+.body { padding: 28px 32px; }
+.dots { display: flex; gap: 5px; margin-bottom: 24px; }
+.dot { flex: 1; height: 2px; background: var(--border-light); border-radius: 1px; transition: all 0.3s; }
+.dot.active { background: var(--graphite); }
+.dot.done { background: var(--silver); }
+.step-label { font-size: 10px; letter-spacing: 2.5px; color: var(--carbon); text-transform: uppercase; margin-bottom: 8px; font-weight: 600; }
+.step-question { font-size: 20px; font-weight: 400; color: var(--graphite); margin: 0 0 6px; line-height: 1.3; letter-spacing: -0.2px; }
+.step-help { font-size: 12px; color: var(--text-soft); margin-bottom: 20px; font-weight: 300; line-height: 1.5; }
+.field { margin-bottom: 16px; }
+.field-label { display: block; font-size: 10px; color: var(--carbon); margin-bottom: 6px; letter-spacing: 1.5px; font-weight: 600; text-transform: uppercase; }
+.field-hint { font-size: 11px; color: var(--text-soft); margin-top: 4px; font-style: italic; }
+.field-badge { display: inline-block; font-size: 9px; color: var(--text-soft); background: var(--cream); padding: 2px 8px; border-radius: 10px; margin-left: 6px; letter-spacing: 0.5px; font-weight: 500; text-transform: none; }
+.input, .textarea, .select { width: 100%; padding: 11px 14px; background: var(--white); border: 0.5px solid var(--border); border-radius: 8px; color: var(--graphite); font-size: 13px; font-family: inherit; outline: none; transition: all 0.2s; }
+.input:focus, .textarea:focus, .select:focus { border-color: var(--carbon); box-shadow: 0 0 0 3px var(--shadow); }
+.input::placeholder, .textarea::placeholder { color: var(--silver); font-weight: 300; }
+.textarea { resize: vertical; min-height: 70px; line-height: 1.5; }
+.radio-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.radio-card { border: 0.5px solid var(--border); border-radius: 10px; padding: 14px; cursor: pointer; transition: all 0.2s; background: var(--white); }
+.radio-card:hover { border-color: var(--carbon); }
+.radio-card.selected { border: 1.5px solid var(--graphite); background: var(--cream); }
+.radio-card-title { font-size: 13px; font-weight: 500; color: var(--graphite); margin-bottom: 3px; }
+.radio-card-desc { font-size: 11px; color: var(--text-soft); font-weight: 300; }
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip { padding: 6px 12px; background: var(--white); border: 0.5px solid var(--border); border-radius: 16px; font-size: 11px; color: var(--text-soft); cursor: pointer; transition: all 0.2s; user-select: none; }
+.chip:hover { border-color: var(--carbon); color: var(--carbon); }
+.chip.active { background: var(--graphite); border-color: var(--graphite); color: var(--white); font-weight: 500; }
+.pill { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; background: var(--cream); border: 0.5px solid var(--border-light); border-radius: 12px; font-size: 11px; color: var(--text-soft); margin-top: 8px; }
+.pill-dot { width: 4px; height: 4px; background: var(--carbon); border-radius: 50%; }
+.summary { background: var(--cream); border: 0.5px solid var(--border-light); border-radius: 10px; padding: 14px 16px; font-size: 12px; color: var(--text-soft); margin-top: 16px; }
+.summary strong { color: var(--graphite); font-weight: 500; }
+.campaign-card { background: var(--cream); border: 0.5px solid var(--border-light); border-radius: 12px; padding: 16px; margin-bottom: 12px; }
+.campaign-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; margin-bottom: 12px; border-bottom: 0.5px solid var(--border-light); }
+.campaign-title { font-size: 13px; font-weight: 500; color: var(--graphite); }
+.btn-link { background: none; border: none; color: var(--text-soft); font-size: 11px; cursor: pointer; font-family: inherit; padding: 4px 8px; border-radius: 4px; transition: all 0.15s; }
+.btn-link:hover { color: var(--graphite); background: var(--white); }
+.btn-danger { color: var(--danger); }
+.btn-danger:hover { color: #8E4040; background: #FEF6F6; }
+.conjunto-card { background: var(--white); border: 0.5px solid var(--border-light); border-radius: 10px; padding: 14px; margin-bottom: 10px; position: relative; border-left: 3px solid var(--accent-1); transition: all 0.2s; }
+.conjunto-card[data-idx="0"] { border-left-color: var(--accent-1); }
+.conjunto-card[data-idx="1"] { border-left-color: var(--accent-2); }
+.conjunto-card[data-idx="2"] { border-left-color: var(--accent-3); }
+.conjunto-card[data-idx="3"] { border-left-color: var(--accent-4); }
+.conjunto-card[data-idx="4"] { border-left-color: var(--accent-5); }
+.conjunto-card[data-idx="5"] { border-left-color: var(--accent-1); }
+.conjunto-card[data-idx="6"] { border-left-color: var(--accent-2); }
+.conjunto-card[data-idx="7"] { border-left-color: var(--accent-3); }
+.conjunto-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 0.5px solid var(--border-light); }
+.conjunto-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 14px; font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
+.conjunto-badge[data-idx="0"] { background: rgba(200, 164, 126, 0.14); color: #8b6a48; }
+.conjunto-badge[data-idx="1"] { background: rgba(143, 166, 142, 0.14); color: #5a7558; }
+.conjunto-badge[data-idx="2"] { background: rgba(165, 155, 181, 0.14); color: #6b6080; }
+.conjunto-badge[data-idx="3"] { background: rgba(184, 155, 136, 0.14); color: #7f6450; }
+.conjunto-badge[data-idx="4"] { background: rgba(143, 160, 181, 0.14); color: #5a6d85; }
+.conjunto-badge[data-idx="5"] { background: rgba(200, 164, 126, 0.14); color: #8b6a48; }
+.conjunto-badge[data-idx="6"] { background: rgba(143, 166, 142, 0.14); color: #5a7558; }
+.conjunto-badge[data-idx="7"] { background: rgba(165, 155, 181, 0.14); color: #6b6080; }
+.conjunto-title { font-size: 12px; font-weight: 500; color: var(--graphite); letter-spacing: 0.5px; }
+.row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+.row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 8px; }
+.mini-label { font-size: 9px; color: var(--text-soft); margin-bottom: 3px; letter-spacing: 0.8px; font-weight: 500; text-transform: uppercase; }
+.mini-input, .mini-select { width: 100%; padding: 7px 10px; background: var(--cream); border: 0.5px solid var(--border); border-radius: 6px; font-size: 11px; color: var(--graphite); font-family: inherit; outline: none; transition: all 0.2s; }
+.mini-input:focus, .mini-select:focus { background: var(--white); border-color: var(--carbon); }
+.pieza-card { background: var(--cream); border: 0.5px solid var(--border-light); border-radius: 8px; padding: 12px; margin-bottom: 8px; transition: all 0.2s; }
+.pieza-card.reserva { border-style: dashed; border-color: var(--silver); }
+.pieza-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
+.pieza-title { font-size: 11px; font-weight: 500; color: var(--graphite); letter-spacing: 0.3px; }
+.pieza-badge { font-size: 8px; padding: 2px 7px; border-radius: 8px; letter-spacing: 1px; font-weight: 600; text-transform: uppercase; }
+.pieza-badge.activa { background: var(--graphite); color: var(--white); }
+.pieza-badge.reserva { background: var(--silver); color: var(--white); }
+.btn-add-dashed { width: 100%; padding: 10px; background: transparent; border: 1px dashed var(--border); border-radius: 8px; color: var(--text-soft); font-size: 11px; font-family: inherit; cursor: pointer; letter-spacing: 0.5px; font-weight: 500; transition: all 0.2s; margin-top: 6px; }
+.btn-add-dashed:hover { border-color: var(--carbon); color: var(--carbon); background: var(--cream); }
+.btn-add-dashed.primary { border-width: 1.5px; color: var(--carbon); font-weight: 500; padding: 12px; }
+.btn-duplicate { width: 100%; padding: 9px; background: var(--white); border: 0.5px solid var(--graphite); border-radius: 8px; color: var(--graphite); font-size: 11px; font-family: inherit; cursor: pointer; letter-spacing: 0.5px; font-weight: 500; transition: all 0.2s; margin-top: 6px; }
+.btn-duplicate:hover { background: var(--graphite); color: var(--white); }
+.team-row { display: grid; grid-template-columns: 110px 1fr 24px; gap: 6px; margin-bottom: 5px; align-items: center; }
+.team-row input { padding: 7px 9px; border: 0.5px solid var(--border); border-radius: 5px; font-size: 11px; font-family: inherit; color: var(--graphite); outline: none; transition: all 0.15s; background: var(--white); }
+.team-row input:focus { border-color: var(--carbon); }
+.footer { padding: 18px 32px; background: var(--cream); border-top: 0.5px solid var(--border-light); display: flex; justify-content: space-between; align-items: center; }
+.counter { font-size: 11px; color: var(--silver); letter-spacing: 0.5px; }
+.btn-group { display: flex; gap: 8px; }
+.btn { padding: 11px 22px; border-radius: 8px; font-size: 11px; letter-spacing: 1.5px; font-weight: 500; font-family: inherit; cursor: pointer; text-transform: uppercase; transition: all 0.2s; border: none; }
+.btn-secondary { background: transparent; border: 0.5px solid var(--border); color: var(--text-soft); }
+.btn-secondary:hover { border-color: var(--carbon); color: var(--carbon); }
+.btn-secondary:disabled { opacity: 0.35; cursor: not-allowed; }
+.btn-primary { background: var(--graphite); color: var(--white); }
+.btn-primary:hover { background: var(--carbon); }
+.toggle-group { display: flex; gap: 6px; margin-bottom: 12px; }
+.toggle-btn { flex: 1; padding: 10px; background: var(--white); border: 0.5px solid var(--border); border-radius: 8px; font-size: 12px; color: var(--text-soft); cursor: pointer; font-family: inherit; transition: all 0.2s; }
+.toggle-btn.active { background: var(--cream); border: 1.5px solid var(--graphite); color: var(--graphite); font-weight: 500; }
+.checkbox-wrap { display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--text-soft); margin: 10px 0; }
+.checkbox-wrap input { margin: 0; cursor: pointer; }
+.prompt-output { background: var(--graphite); color: #E8E5E2; border-radius: 12px; padding: 20px; font-family: 'Menlo', 'Consolas', monospace; font-size: 11px; line-height: 1.7; max-height: 500px; overflow-y: auto; white-space: pre-wrap; word-wrap: break-word; margin: 16px 0; }
+.prompt-output::-webkit-scrollbar { width: 8px; }
+.prompt-output::-webkit-scrollbar-track { background: transparent; }
+.prompt-output::-webkit-scrollbar-thumb { background: var(--carbon); border-radius: 4px; }
+.action-buttons { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
+.action-buttons .btn { flex: 1; min-width: 120px; }
+.custom-input-inline { margin-top: 6px; padding: 6px 10px; background: var(--white); border: 0.5px solid var(--carbon); border-radius: 6px; font-size: 11px; font-family: inherit; color: var(--graphite); width: 100%; outline: none; }
+.copy-success { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--graphite); color: var(--white); padding: 12px 24px; border-radius: 24px; font-size: 12px; font-weight: 500; letter-spacing: 0.5px; box-shadow: 0 8px 24px rgba(0,0,0,0.2); transition: transform 0.3s ease; z-index: 1000; }
+.copy-success.visible { transform: translateX(-50%) translateY(0); }
+.signature { text-align: center; padding: 16px 32px; border-top: 0.5px solid var(--border-light); font-size: 10px; color: var(--silver); letter-spacing: 1px; }
+.modelo-precio-card { background: var(--cream); border: 0.5px solid var(--border-light); border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; transition: all 0.2s; }
+.modelo-precio-card.selected { background: var(--white); border: 1px solid var(--graphite); }
+.modelo-precio-row { display: flex; align-items: center; gap: 12px; }
+.modelo-checkbox { width: 18px; height: 18px; border-radius: 4px; border: 1px solid var(--border); background: var(--white); display: flex; align-items: center; justify-content: center; flex-shrink: 0; cursor: pointer; font-size: 11px; color: var(--white); transition: all 0.2s; }
+.modelo-checkbox.checked { background: var(--graphite); border-color: var(--graphite); }
+.modelo-name { flex: 1; font-size: 13px; font-weight: 500; color: var(--graphite); }
+.modelo-name.unselected { color: var(--text-soft); }
+.price-inputs { display: flex; gap: 6px; align-items: center; }
+.price-input { width: 90px; padding: 6px 10px; border: 0.5px solid var(--border); border-radius: 6px; font-size: 11px; font-family: inherit; color: var(--graphite); text-align: right; outline: none; background: var(--white); }
+.price-input:focus { border-color: var(--carbon); }
+.price-input::placeholder { color: var(--silver); }
+.price-label-inline { font-size: 9px; color: var(--text-soft); letter-spacing: 0.5px; }
+.budget-warning { background: rgba(176, 90, 90, 0.08); border: 0.5px solid var(--danger); color: var(--danger); padding: 10px 14px; border-radius: 8px; font-size: 12px; font-weight: 500; margin-top: 8px; }
+.budget-ok { background: rgba(107, 142, 107, 0.08); border: 0.5px solid var(--success); color: var(--success); padding: 10px 14px; border-radius: 8px; font-size: 12px; font-weight: 500; margin-top: 8px; }
+@media (max-width: 640px) {
+  .app { border: none; }
+  .header { padding: 22px 20px 18px; }
+  .header img { height: 40px; }
+  .body { padding: 22px 20px; }
+  .footer { padding: 16px 20px; flex-direction: column; gap: 12px; }
+  .footer .btn-group { width: 100%; }
+  .footer .btn { flex: 1; }
+  .radio-grid { grid-template-columns: 1fr; }
+  .row-2, .row-3 { grid-template-columns: 1fr; }
+  .team-row { grid-template-columns: 100px 1fr 24px; }
+  .price-inputs { flex-direction: column; align-items: stretch; gap: 4px; }
+  .price-input { width: 100%; text-align: left; }
+}
+</style>
+</head>
+<body>
+<div class="app">
+  <div class="header">
+    <img src="logo.png" alt="Serrano Group">
+    <div class="header-title">Campaign Builder</div>
+    <div class="header-sub">Briefs, guiones y copy para Meta Ads</div>
+  </div>
+  <div class="body" id="body"></div>
+  <div class="footer">
+    <div class="counter" id="counter">Paso 1 de 7</div>
+    <div class="btn-group">
+      <button class="btn btn-secondary" id="btnBack" onclick="goBack()">← Atrás</button>
+      <button class="btn btn-primary" id="btnNext" onclick="goNext()">Continuar →</button>
+    </div>
+  </div>
+  <div class="signature">SERRANO GROUP · Campaign Builder v3.1</div>
+</div>
+<div class="copy-success" id="copySuccess">Copiado al portapapeles</div>
+
+<script>
+// ============================================
+// DATA · CORRECCIONES APLICADAS
+// ============================================
+const MODELOS_BASE = [
+  "NB 530", "NB 9060", "Nike V2K", "On Cloud",
+  "Adidas Adizero", "Adidas Ultraboost", "Adidas Samba",
+  "Nike Free Metcon", "Nike Zoom", "Asics"
+];
+
+const EVENTOS_ESTACIONALES = [
+  { mes: "Enero", nombre: "Reset del año" },
+  { mes: "Febrero", nombre: "San Valentín" },
+  { mes: "Marzo", nombre: "Día de la Mujer" },
+  { mes: "Mayo", nombre: "Día de la Madre" },
+  { mes: "Junio", nombre: "Día del Padre" },
+  { mes: "Junio", nombre: "Primatón mitad de año" },
+  { mes: "Agosto", nombre: "Regreso a clase" },
+  { mes: "Septiembre", nombre: "Amor y Amistad" },
+  { mes: "Octubre", nombre: "Halloween" },
+  { mes: "Noviembre", nombre: "Black Friday" },
+  { mes: "Diciembre", nombre: "Primatón fin de año" }
+];
+
+const ANGULOS_BASE = [
+  "Problema / Dolor",
+  "Beneficios",
+  "Prueba social",
+  "Aspiracional / Funcional",
+  "Confianza"
+];
+
+const NARRATIVAS_BASE = [
+  "Testimonio", "Problema-Solución", "Unboxing", "Antes-Después",
+  "Oferta directa", "Tutorial / Cómo usar", "Founder story", "Reviews", "Modo de uso"
+];
+
+// #4: "Video in-house" → "Videos por nosotros"
+const TIPOS_PIEZA = ["Video UGC", "Videos por nosotros", "Imagen estática", "Carrusel"];
+
+// #8: Formatos de imagen/video
+const FORMATOS = ["9:16", "1:1", "4:5"];
+
+const ESTRUCTURAS_COPY = [
+  { nombre: "PAS", label: "PAS · Problema-Agitación-Solución" },
+  { nombre: "AIDA", label: "AIDA · Atención-Interés-Deseo-Acción" },
+  { nombre: "FAB", label: "FAB · Características-Ventajas-Beneficios" },
+  { nombre: "BAB", label: "BAB · Antes-Después-Puente" },
+  { nombre: "4U", label: "4U · Útil-Urgente-Único-Específico" },
+  { nombre: "Storytelling", label: "Storytelling · Narrativa con historia" }
+];
+
+const OBJETIVOS_META = [
+  "Reconocimiento", "Tráfico", "Interacción",
+  "Clientes potenciales", "Promoción de la app", "Ventas"
+];
+
+const TIPOS_TRAFICO = ["Frío", "Tibio", "Caliente"];
+// #2: "Total" → "Decisión"
+const NIVELES_CONCIENCIA = ["Inconsciente", "Problema", "Solución", "Producto", "Decisión"];
+const MOTIVOS = ["Emocional", "Racional", "Social"];
+// #3: Públicos corregidos
+const PUBLICOS = ["Segmentación abierta", "Advantage+", "Retargeting", "Públicos similares", "Intereses"];
+
+// ============================================
+// ESTADO GLOBAL
+// ============================================
+const state = {
+  currentStep: 1,
+  empresa: "",
+  // Paso 2 · #7: Campos extendidos
+  nombreCampana: "",
+  contextoCampana: "",
+  tipoCampana: "",
+  eventoEstacional: "",
+  eventoCustom: "",
+  objetivoCampana: "",
+  publicoObjetivo: "",
+  insightMensajeClave: "",
+  queNOhacer: "",
+  tonoYestilo: "",
+  llamadaAccion: "",
+  propuestasValor: "",
+  // Paso 3
+  tipoOferta: "",
+  otraOferta: "",
+  contextoOferta: "",
+  // Paso 4 · #12: Modelos con precios
+  modelosSeleccionados: [],
+  modelosCustom: [],
+  preciosModelos: {}, // { "NB 530": { antes: "189900", ahora: "169900" } }
+  // Paso 5
+  objetivo: "",
+  // #6: ABO/CBO
+  tipoPresupuesto: "ABO",
+  campanas: [],
+  angulosPersonalizados: [],
+  narrativasCustom: [],
+  tiposPiezaCustom: [],
+  // Paso 6
+  presupuestoModo: "mensual",
+  presupuestoValor: "",
+  fechaInicio: "",
+  fechaFin: "",
+  sinFechaFin: false,
+  // Paso 7
+  equipo: [
+    { rol: "CEO", email: "Administrativo@tennispremiumcol.com" },
+    { rol: "Dir. creativa", email: "creativo@tennispremiumcol.com" },
+    { rol: "Diseñador", email: "diseno@tennispremiumcol.com" },
+    { rol: "Trafficker", email: "Trafico@tennispremiumcol.com" },
+    { rol: "Community", email: "Community@tennispremiumcol.com" }
+  ]
+};
+
+// ============================================
+// HELPERS
+// ============================================
+function getAllModelos() { return [...MODELOS_BASE, ...state.modelosCustom]; }
+function getAllAngulos() { return [...ANGULOS_BASE, ...state.angulosPersonalizados]; }
+function getAllNarrativas() { return [...NARRATIVAS_BASE, ...state.narrativasCustom]; }
+function getAllTiposPieza() { return [...TIPOS_PIEZA, ...state.tiposPiezaCustom]; }
+
+function newPieza(estado = "activa") {
+  return {
+    id: "P" + Math.random().toString(36).substr(2, 5).toUpperCase(),
+    estado: estado,
+    modelo: "", tipoPieza: "", formato: "", carruselSlides: 5,
+    angulo: "", trafico: "", conciencia: "", motivo: "",
+    narrativa: "", estructuraCopy: "",
+    _customs: {}
+  };
+}
+function newConjunto(nombre = "") {
+  return {
+    id: "C" + Math.random().toString(36).substr(2, 5).toUpperCase(),
+    nombre: nombre, publico: "", publicoCustom: "",
+    porcentaje: 33, piezas: []
+  };
+}
+function newCampana(nombre = "") {
+  return {
+    id: "CA" + Math.random().toString(36).substr(2, 5).toUpperCase(),
+    nombre: nombre,
+    conjuntos: [newConjunto()]
+  };
+}
+function formatMoney(num) {
+  if (!num) return "0";
+  return new Intl.NumberFormat('es-CO').format(parseInt(num));
+}
+function parseMoney(str) { return String(str).replace(/[^\d]/g, ""); }
+function escapeHTML(str) {
+  if (!str && str !== 0) return "";
+  return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+}
+function escapeAttr(str) { return String(str).replace(/'/g, "\\'").replace(/"/g, "&quot;"); }
+
+// #1: Dropdown con título como placeholder + opción "+ Otro"
+function selectPlaceholder(title, options, currentValue, onChangeCode, allowCustom = true) {
+  const hasCustom = currentValue && !options.includes(currentValue) && currentValue !== "__custom__";
+  const selectValue = hasCustom ? "__custom__" : currentValue;
+  let html = `<select class="mini-select" onchange="${onChangeCode}">`;
+  html += `<option value="" ${!selectValue ? "selected" : ""}>${title}</option>`;
+  options.forEach(opt => {
+    html += `<option value="${escapeAttr(opt)}" ${selectValue === opt ? "selected" : ""}>${escapeHTML(opt)}</option>`;
+  });
+  if (allowCustom) {
+    html += `<option value="__custom__" ${selectValue === "__custom__" ? "selected" : ""}>+ Otro...</option>`;
+  }
+  html += `</select>`;
+  return html;
+}
+
+// ============================================
+// RENDER
+// ============================================
+function render() {
+  const step = state.currentStep;
+  document.getElementById("counter").textContent = `Paso ${step} de 7`;
+  document.getElementById("btnBack").disabled = step === 1;
+  document.getElementById("btnNext").textContent = step === 7 ? "Generar prompt →" : "Continuar →";
+
+  const body = document.getElementById("body");
+  let html = renderDots(step);
+  if (step === 1) html += renderStep1();
+  else if (step === 2) html += renderStep2();
+  else if (step === 3) html += renderStep3();
+  else if (step === 4) html += renderStep4();
+  else if (step === 5) html += renderStep5();
+  else if (step === 6) html += renderStep6();
+  else if (step === 7) html += renderStep7();
+  else if (step === 8) html += renderPromptOutput();
+  body.innerHTML = html;
+
+  if (step === 8) {
+    document.getElementById("btnNext").style.display = "none";
+    document.getElementById("btnBack").textContent = "← Editar";
+  } else {
+    document.getElementById("btnNext").style.display = "";
+    document.getElementById("btnBack").textContent = "← Atrás";
+  }
+}
+
+function renderDots(step) {
+  let dots = '<div class="dots">';
+  for (let i = 1; i <= 7; i++) {
+    let cls = "dot";
+    if (i === step) cls += " active";
+    else if (i < step) cls += " done";
+    dots += `<div class="${cls}"></div>`;
+  }
+  return dots + '</div>';
+}
+
+// ============================================
+// STEP 1
+// ============================================
+function renderStep1() {
+  return `
+    <div class="step-label">Paso 1 · Identificación</div>
+    <h2 class="step-question">¿Para qué empresa es esta campaña?</h2>
+    <p class="step-help">El nombre de la marca que verá reflejada en el brief final y los guiones.</p>
+    <div class="field">
+      <label class="field-label">Empresa</label>
+      <input type="text" class="input"
+        placeholder="Tennispremium · Altagama Premium · Yeeshop"
+        value="${escapeHTML(state.empresa)}"
+        oninput="state.empresa = this.value">
+    </div>
+  `;
+}
+
+// ============================================
+// STEP 2 · #7: Brief extendido
+// ============================================
+function renderStep2() {
+  const isEstacional = state.tipoCampana === "estacional";
+  const isEvergreen = state.tipoCampana === "evergreen";
+  let eventosHTML = "";
+  if (isEstacional) {
+    const eventoActual = state.eventoEstacional;
+    eventosHTML = `
+      <div class="field">
+        <label class="field-label">Evento estacional</label>
+        <select class="select" onchange="state.eventoEstacional = this.value; render()">
+          <option value="">Evento estacional</option>
+          ${EVENTOS_ESTACIONALES.map(e => `
+            <option value="${escapeAttr(e.nombre)}" ${eventoActual === e.nombre ? "selected" : ""}>
+              ${e.mes} · ${e.nombre}
+            </option>
+          `).join("")}
+          <option value="__custom__" ${eventoActual === "__custom__" ? "selected" : ""}>+ Agregar evento personalizado</option>
+        </select>
+      </div>
+      ${eventoActual === "__custom__" ? `
+        <div class="field">
+          <label class="field-label">Nombre del evento custom</label>
+          <input type="text" class="input" placeholder="Ej: Aniversario Serrano, Cyber Monday..."
+            value="${escapeHTML(state.eventoCustom)}"
+            oninput="state.eventoCustom = this.value">
+        </div>
+      ` : ""}
+    `;
+  }
+  return `
+    <div class="step-label">Paso 2 · Brief</div>
+    <h2 class="step-question">Cuéntame sobre la campaña</h2>
+    <p class="step-help">Entre más contexto le des al brief, mejores saldrán los guiones y copys.</p>
+
+    <div class="field">
+      <label class="field-label">Nombre de la campaña</label>
+      <input type="text" class="input"
+        placeholder="Ej: DDM 2026, Black Friday, Semestre..."
+        value="${escapeHTML(state.nombreCampana)}"
+        oninput="state.nombreCampana = this.value">
+    </div>
+
+    <div class="field">
+      <label class="field-label">Contexto de la campaña <span class="field-badge">Recomendado</span></label>
+      <textarea class="textarea" placeholder="¿Por qué este nombre? ¿Qué concepto? Ej: SEMESTRE porque es la colección de regreso a clases..."
+        oninput="state.contextoCampana = this.value">${escapeHTML(state.contextoCampana)}</textarea>
+    </div>
+
+    <div class="field">
+      <label class="field-label">Tipo de campaña</label>
+      <div class="radio-grid">
+        <div class="radio-card ${isEvergreen ? "selected" : ""}" onclick="state.tipoCampana='evergreen'; state.eventoEstacional=''; render()">
+          <div class="radio-card-title">🔄 Evergreen</div>
+          <div class="radio-card-desc">Siempre activa, sin fecha fin</div>
+        </div>
+        <div class="radio-card ${isEstacional ? "selected" : ""}" onclick="state.tipoCampana='estacional'; render()">
+          <div class="radio-card-title">📅 Estacional</div>
+          <div class="radio-card-desc">Evento específico con fecha</div>
+        </div>
+      </div>
+    </div>
+
+    ${eventosHTML}
+
+    <div style="margin: 24px 0 16px; padding-top: 16px; border-top: 0.5px solid var(--border-light);">
+      <div style="font-size: 11px; color: var(--carbon); letter-spacing: 2px; font-weight: 600; text-transform: uppercase; margin-bottom: 4px;">
+        ✦ Info para afinar guiones y copys
+      </div>
+      <div style="font-size: 11px; color: var(--text-soft); font-style: italic; margin-bottom: 16px;">
+        Todo esto va al prompt maestro. Cuanto más concreto, mejor sale el output.
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="field-label">Objetivo de la campaña</label>
+      <textarea class="textarea" placeholder="¿Qué quieres lograr concretamente? Ej: Incrementar ventas 30% vs DDM 2025..."
+        oninput="state.objetivoCampana = this.value">${escapeHTML(state.objetivoCampana)}</textarea>
+    </div>
+
+    <div class="field">
+      <label class="field-label">Público objetivo</label>
+      <textarea class="textarea" placeholder="Demografía + intereses + comportamiento. Ej: Hombres y mujeres 25-55 años buscando regalo para mamá..."
+        oninput="state.publicoObjetivo = this.value">${escapeHTML(state.publicoObjetivo)}</textarea>
+    </div>
+
+    <div class="field">
+      <label class="field-label">Insight / Mensaje clave</label>
+      <textarea class="textarea" placeholder="¿Cuál es la tensión emocional que hace que compren? Ej: Mamá se dedica a todos, este día tiene que ser para ella..."
+        oninput="state.insightMensajeClave = this.value">${escapeHTML(state.insightMensajeClave)}</textarea>
+    </div>
+
+    <div class="field">
+      <label class="field-label">Propuestas de valor de la marca</label>
+      <textarea class="textarea" placeholder="¿Por qué elegirnos? Ej: Entrega 24h en Cali, garantía, financiación con Addi, atención por WhatsApp..."
+        oninput="state.propuestasValor = this.value">${escapeHTML(state.propuestasValor)}</textarea>
+    </div>
+
+    <div class="field">
+      <label class="field-label">Tono y estilo</label>
+      <textarea class="textarea" placeholder="Cómo debe sonar la marca. Ej: Colombiano natural, cercano, no corporativo..."
+        oninput="state.tonoYestilo = this.value">${escapeHTML(state.tonoYestilo)}</textarea>
+    </div>
+
+    <div class="field">
+      <label class="field-label">Llamada a la acción</label>
+      <textarea class="textarea" placeholder="¿Qué acción quieres que tome el cliente? Ej: Comprar en la web, escribir por WhatsApp, apartar con Addi..."
+        oninput="state.llamadaAccion = this.value">${escapeHTML(state.llamadaAccion)}</textarea>
+    </div>
+
+    <div class="field">
+      <label class="field-label">Qué NO hacer</label>
+      <textarea class="textarea" placeholder="Limitaciones. Ej: NO usar urgencia barata, NO comparar con marcas directamente..."
+        oninput="state.queNOhacer = this.value">${escapeHTML(state.queNOhacer)}</textarea>
+    </div>
+  `;
+}
+
+// ============================================
+// STEP 3
+// ============================================
+function renderStep3() {
+  const ofertas = [
+    { val: "escalonada", titulo: "Escalonada por cantidad", desc: "1 par envío gratis · 2 pares -10% · 3 pares -15% · 4+ -20%" },
+    { val: "descuento", titulo: "Descuento fijo", desc: "Un porcentaje único para toda la colección" },
+    { val: "2x1", titulo: "2x1 o combos", desc: "Lleva 2 paga 1 u ofertas combinadas" },
+    { val: "envio", titulo: "Envío gratis", desc: "Sin descuento, solo envío incluido" },
+    { val: "financiacion", titulo: "Financiación destacada", desc: "Cuotas con Addi o Sistecrédito" },
+    { val: "otra", titulo: "Otra oferta personalizada", desc: "Tú describes la promoción" }
+  ];
+  return `
+    <div class="step-label">Paso 3 · Oferta</div>
+    <h2 class="step-question">¿Qué oferta manejas?</h2>
+    <p class="step-help">El incentivo principal que verán los clientes.</p>
+    <div class="field">
+      ${ofertas.map(o => `
+        <div class="radio-card ${state.tipoOferta === o.val ? "selected" : ""}" onclick="state.tipoOferta='${o.val}'; render()" style="margin-bottom: 6px;">
+          <div class="radio-card-title">${o.titulo}</div>
+          <div class="radio-card-desc">${o.desc}</div>
+        </div>
+      `).join("")}
+    </div>
+    ${state.tipoOferta === "otra" ? `
+      <div class="field">
+        <label class="field-label">Descripción de la oferta</label>
+        <textarea class="textarea" placeholder="Describe tu oferta personalizada..."
+          oninput="state.otraOferta = this.value">${escapeHTML(state.otraOferta)}</textarea>
+      </div>
+    ` : ""}
+    <div class="field">
+      <label class="field-label">Contexto de la oferta <span class="field-badge">Recomendado</span></label>
+      <textarea class="textarea" placeholder="Ej: Código SEMESTRE con -$20.000 para estudiantes universitarios..."
+        oninput="state.contextoOferta = this.value">${escapeHTML(state.contextoOferta)}</textarea>
+    </div>
+  `;
+}
+
+// ============================================
+// STEP 4 · #12: Modelos con precios inline
+// ============================================
+function renderStep4() {
+  const todosModelos = getAllModelos();
+  return `
+    <div class="step-label">Paso 4 · Catálogo</div>
+    <h2 class="step-question">¿Qué modelos usas en esta campaña?</h2>
+    <p class="step-help">Marca los modelos y agrega precios para que los copys y guiones usen cifras reales.</p>
+
+    <div class="field">
+      <label class="field-label">Modelos Tennispremium</label>
+      ${todosModelos.map(m => renderModeloPrecio(m)).join("")}
+    </div>
+
+    <div class="field">
+      <label class="field-label">Agregar modelo personalizado</label>
+      <div style="display: flex; gap: 6px;">
+        <input type="text" class="input" id="nuevoModelo" placeholder="Nombre del modelo nuevo">
+        <button class="btn btn-secondary" style="padding: 11px 18px;" onclick="agregarModelo()">+ Agregar</button>
+      </div>
+    </div>
+
+    <div class="pill">
+      <span class="pill-dot"></span>
+      <span><strong style="color: var(--graphite);">${state.modelosSeleccionados.length}</strong> modelos seleccionados</span>
+    </div>
+  `;
+}
+
+function renderModeloPrecio(m) {
+  const selected = state.modelosSeleccionados.includes(m);
+  const precios = state.preciosModelos[m] || { antes: "", ahora: "" };
+  return `
+    <div class="modelo-precio-card ${selected ? "selected" : ""}">
+      <div class="modelo-precio-row">
+        <div class="modelo-checkbox ${selected ? "checked" : ""}" onclick="toggleModelo('${escapeAttr(m)}')">
+          ${selected ? "✓" : ""}
+        </div>
+        <div class="modelo-name ${!selected ? "unselected" : ""}">${escapeHTML(m)}</div>
+        ${selected ? `
+          <div class="price-inputs">
+            <span class="price-label-inline">Antes</span>
+            <input type="text" class="price-input"
+              value="${precios.antes ? '$' + formatMoney(precios.antes) : ''}"
+              placeholder="$0"
+              oninput="updatePrecio('${escapeAttr(m)}', 'antes', this.value); this.value = this.value ? '$' + formatMoney(parseMoney(this.value)) : ''">
+            <span class="price-label-inline">Ahora</span>
+            <input type="text" class="price-input"
+              value="${precios.ahora ? '$' + formatMoney(precios.ahora) : ''}"
+              placeholder="$0"
+              oninput="updatePrecio('${escapeAttr(m)}', 'ahora', this.value); this.value = this.value ? '$' + formatMoney(parseMoney(this.value)) : ''">
+          </div>
+        ` : `<div style="font-size: 10px; color: var(--silver); font-style: italic;">Marca para configurar precio</div>`}
+      </div>
+    </div>
+  `;
+}
+
+function toggleModelo(nombre) {
+  const idx = state.modelosSeleccionados.indexOf(nombre);
+  if (idx >= 0) {
+    state.modelosSeleccionados.splice(idx, 1);
+    delete state.preciosModelos[nombre];
+  } else {
+    state.modelosSeleccionados.push(nombre);
+    state.preciosModelos[nombre] = { antes: "", ahora: "" };
+  }
+  render();
+}
+
+function updatePrecio(modelo, tipo, valor) {
+  if (!state.preciosModelos[modelo]) state.preciosModelos[modelo] = { antes: "", ahora: "" };
+  state.preciosModelos[modelo][tipo] = parseMoney(valor);
+}
+
+function agregarModelo() {
+  const input = document.getElementById("nuevoModelo");
+  const valor = input.value.trim();
+  if (!valor) return;
+  if (!getAllModelos().includes(valor)) {
+    state.modelosCustom.push(valor);
+    state.modelosSeleccionados.push(valor);
+    state.preciosModelos[valor] = { antes: "", ahora: "" };
+  }
+  input.value = "";
+  render();
+}
+
+// ============================================
+// STEP 5 · CORRECCIONES #1, #3, #6, #10, #11
+// ============================================
+function renderStep5() {
+  if (state.campanas.length === 0) {
+    state.campanas.push(newCampana(state.nombreCampana || "Campaña 1"));
+  }
+  return `
+    <div class="step-label">Paso 5 · Estructura Meta Ads</div>
+    <h2 class="step-question">Construye tu estructura publicitaria</h2>
+    <p class="step-help">Define objetivo, presupuesto ABO/CBO, campañas, conjuntos y piezas.</p>
+
+    <div class="field">
+      <label class="field-label">Objetivo principal del brief</label>
+      <div class="chips">
+        ${OBJETIVOS_META.map(o => `
+          <div class="chip ${state.objetivo === o ? "active" : ""}" onclick="state.objetivo='${o}'; render()">${o}</div>
+        `).join("")}
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="field-label">Tipo de presupuesto</label>
+      <div class="radio-grid">
+        <div class="radio-card ${state.tipoPresupuesto === 'ABO' ? "selected" : ""}" onclick="state.tipoPresupuesto='ABO'; render()">
+          <div class="radio-card-title">ABO</div>
+          <div class="radio-card-desc">Presupuesto por conjunto (manual, % debe sumar 100)</div>
+        </div>
+        <div class="radio-card ${state.tipoPresupuesto === 'CBO' ? "selected" : ""}" onclick="state.tipoPresupuesto='CBO'; render()">
+          <div class="radio-card-title">CBO</div>
+          <div class="radio-card-desc">Presupuesto global (Meta optimiza)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="field">
+      <label class="field-label">Campañas</label>
+      ${state.campanas.map((c, ci) => renderCampana(c, ci)).join("")}
+      <button class="btn-add-dashed primary" onclick="agregarCampana()">+ Agregar otra campaña</button>
+    </div>
+
+    ${renderResumen()}
+  `;
+}
+
+function renderCampana(camp, ci) {
+  // #11: Validación de %
+  let sumaPorc = 0;
+  camp.conjuntos.forEach(cj => sumaPorc += (parseInt(cj.porcentaje) || 0));
+  const showPorc = state.tipoPresupuesto === "ABO";
+  
+  let porcAlert = "";
+  if (showPorc && camp.conjuntos.length > 0) {
+    if (sumaPorc === 100) {
+      porcAlert = `<div class="budget-ok">✓ Presupuesto asignado: 100% (correcto)</div>`;
+    } else {
+      const diff = 100 - sumaPorc;
+      porcAlert = `<div class="budget-warning">⚠ Presupuesto asignado: ${sumaPorc}% · ${diff > 0 ? 'Falta ' + diff + '%' : 'Sobra ' + Math.abs(diff) + '%'}</div>`;
+    }
+  }
+
+  return `
+    <div class="campaign-card">
+      <div class="campaign-header">
+        <div class="campaign-title">Campaña ${ci + 1}</div>
+        ${state.campanas.length > 1 ? `<button class="btn-link btn-danger" onclick="eliminarCampana(${ci})">Eliminar</button>` : ""}
+      </div>
+      <div class="field">
+        <input type="text" class="input" style="font-size: 12px;"
+          placeholder="Nombre de la campaña (ej: DDM 2026 | Ventas)"
+          value="${escapeHTML(camp.nombre)}"
+          oninput="state.campanas[${ci}].nombre = this.value">
+      </div>
+      <div class="mini-label">Conjuntos de anuncio</div>
+      ${camp.conjuntos.map((conj, cji) => renderConjunto(conj, ci, cji)).join("")}
+      <button class="btn-add-dashed" onclick="agregarConjunto(${ci})">+ Agregar conjunto</button>
+      ${porcAlert}
+      ${state.tipoCampana === "estacional" && camp.conjuntos.length > 1 && camp.conjuntos[0].piezas.length > 0 ? `
+        <button class="btn-duplicate" onclick="duplicarPiezas(${ci})">
+          🔄 Duplicar piezas del Conjunto 1 a los demás conjuntos
+        </button>
+      ` : ""}
+    </div>
+  `;
+}
+
+function renderConjunto(conj, ci, cji) {
+  const badgeIdx = cji % 8;
+  const showPorc = state.tipoPresupuesto === "ABO";
+  return `
+    <div class="conjunto-card" data-idx="${badgeIdx}">
+      <div class="conjunto-header">
+        <span class="conjunto-badge" data-idx="${badgeIdx}">Conjunto ${cji + 1}</span>
+        ${state.campanas[ci].conjuntos.length > 1 ? `<button class="btn-link btn-danger" onclick="eliminarConjunto(${ci}, ${cji})">Eliminar</button>` : ""}
+      </div>
+      <div class="${showPorc ? 'row-3' : 'row-2'}">
+        <div>
+          <div class="mini-label">Nombre</div>
+          <input type="text" class="mini-input" placeholder="Nombre del conjunto"
+            value="${escapeHTML(conj.nombre)}"
+            oninput="state.campanas[${ci}].conjuntos[${cji}].nombre = this.value">
+        </div>
+        <div>
+          <div class="mini-label">Público</div>
+          ${selectPlaceholder("Público", PUBLICOS, conj.publico, `onChangePublico(${ci}, ${cji}, this.value)`)}
+          ${conj.publico === "__custom__" ? `
+            <input type="text" class="custom-input-inline" placeholder="Escribe el público"
+              value="${escapeHTML(conj.publicoCustom)}"
+              oninput="state.campanas[${ci}].conjuntos[${cji}].publicoCustom = this.value">
+          ` : ""}
+        </div>
+        ${showPorc ? `
+          <div>
+            <div class="mini-label">% presup.</div>
+            <input type="number" class="mini-input" min="0" max="100" placeholder="33"
+              value="${conj.porcentaje}"
+              oninput="state.campanas[${ci}].conjuntos[${cji}].porcentaje = parseInt(this.value) || 0; render()">
+          </div>
+        ` : ''}
+      </div>
+      <div class="mini-label" style="margin-top: 10px;">Piezas</div>
+      ${conj.piezas.map((p, pi) => renderPieza(p, ci, cji, pi)).join("")}
+      <button class="btn-add-dashed" onclick="agregarPieza(${ci}, ${cji}, 'activa')" style="margin-top: 4px;">+ Pieza activa</button>
+      <button class="btn-add-dashed" onclick="agregarPieza(${ci}, ${cji}, 'reserva')" style="margin-top: 4px;">+ Pieza de reserva</button>
+    </div>
+  `;
+}
+
+function onChangePublico(ci, cji, valor) {
+  state.campanas[ci].conjuntos[cji].publico = valor;
+  if (valor !== "__custom__") state.campanas[ci].conjuntos[cji].publicoCustom = "";
+  render();
+}
+
+function renderPieza(p, ci, cji, pi) {
+  const esReserva = p.estado === "reserva";
+  return `
+    <div class="pieza-card ${esReserva ? "reserva" : ""}">
+      <div class="pieza-header">
+        <div class="pieza-title">Pieza ${pi + 1} · ${p.id}</div>
+        <div style="display: flex; gap: 6px; align-items: center;">
+          <span class="pieza-badge ${esReserva ? "reserva" : "activa"}">${esReserva ? "Reserva" : "Activa"}</span>
+          <button class="btn-link btn-danger" onclick="eliminarPieza(${ci}, ${cji}, ${pi})">×</button>
+        </div>
+      </div>
+
+      <div class="row-2">
+        <div>
+          <div class="mini-label">Modelo</div>
+          ${selectPlaceholder("Modelo", state.modelosSeleccionados, p.modelo, `updatePiezaField(${ci}, ${cji}, ${pi}, 'modelo', this.value)`)}
+          ${p.modelo === "__custom__" ? renderCustomInput("Escribe el modelo", p._customs.modelo, ci, cji, pi, 'modelo') : ""}
+        </div>
+        <div>
+          <div class="mini-label">Tipo de pieza</div>
+          ${selectPlaceholder("Tipo de pieza", getAllTiposPieza(), p.tipoPieza, `updatePiezaField(${ci}, ${cji}, ${pi}, 'tipoPieza', this.value)`)}
+          ${p.tipoPieza === "__custom__" ? renderCustomInput("Escribe el tipo", p._customs.tipoPieza, ci, cji, pi, 'tipoPieza') : ""}
+        </div>
+      </div>
+
+      ${p.tipoPieza === "Carrusel" ? `
+        <div class="row-2">
+          <div>
+            <div class="mini-label">Nº de slides</div>
+            <input type="number" class="mini-input" min="2" max="10"
+              value="${p.carruselSlides}"
+              oninput="state.campanas[${ci}].conjuntos[${cji}].piezas[${pi}].carruselSlides = parseInt(this.value) || 5">
+          </div>
+          <div></div>
+        </div>
+      ` : ""}
+
+      <div class="row-2">
+        <div>
+          <div class="mini-label">Formato / Medidas</div>
+          ${selectPlaceholder("Formato", FORMATOS, p.formato, `updatePiezaField(${ci}, ${cji}, ${pi}, 'formato', this.value)`)}
+          ${p.formato === "__custom__" ? renderCustomInput("Ej: 16:9", p._customs.formato, ci, cji, pi, 'formato') : ""}
+        </div>
+        <div>
+          <div class="mini-label">Ángulo</div>
+          ${selectPlaceholder("Ángulo", getAllAngulos(), p.angulo, `updatePiezaField(${ci}, ${cji}, ${pi}, 'angulo', this.value)`)}
+          ${p.angulo === "__custom__" ? renderCustomInput("Escribe el ángulo", p._customs.angulo, ci, cji, pi, 'angulo') : ""}
+        </div>
+      </div>
+
+      <div class="row-2">
+        <div>
+          <div class="mini-label">Tráfico</div>
+          ${selectPlaceholder("Tráfico", TIPOS_TRAFICO, p.trafico, `updatePiezaField(${ci}, ${cji}, ${pi}, 'trafico', this.value)`)}
+          ${p.trafico === "__custom__" ? renderCustomInput("Escribe", p._customs.trafico, ci, cji, pi, 'trafico') : ""}
+        </div>
+        <div>
+          <div class="mini-label">Conciencia</div>
+          ${selectPlaceholder("Conciencia", NIVELES_CONCIENCIA, p.conciencia, `updatePiezaField(${ci}, ${cji}, ${pi}, 'conciencia', this.value)`)}
+          ${p.conciencia === "__custom__" ? renderCustomInput("Escribe", p._customs.conciencia, ci, cji, pi, 'conciencia') : ""}
+        </div>
+      </div>
+
+      <div class="row-2">
+        <div>
+          <div class="mini-label">Motivo</div>
+          ${selectPlaceholder("Motivo", MOTIVOS, p.motivo, `updatePiezaField(${ci}, ${cji}, ${pi}, 'motivo', this.value)`)}
+          ${p.motivo === "__custom__" ? renderCustomInput("Escribe", p._customs.motivo, ci, cji, pi, 'motivo') : ""}
+        </div>
+        <div>
+          <div class="mini-label">Narrativa</div>
+          ${selectPlaceholder("Narrativa", getAllNarrativas(), p.narrativa, `updatePiezaField(${ci}, ${cji}, ${pi}, 'narrativa', this.value)`)}
+          ${p.narrativa === "__custom__" ? renderCustomInput("Escribe", p._customs.narrativa, ci, cji, pi, 'narrativa') : ""}
+        </div>
+      </div>
+
+      <div class="row-2">
+        <div>
+          <div class="mini-label">Estructura copy</div>
+          <select class="mini-select" onchange="state.campanas[${ci}].conjuntos[${cji}].piezas[${pi}].estructuraCopy = this.value; render()">
+            <option value="">Estructura copy</option>
+            ${ESTRUCTURAS_COPY.map(e => `<option value="${e.nombre}" ${p.estructuraCopy === e.nombre ? "selected" : ""}>${e.nombre}</option>`).join("")}
+          </select>
+        </div>
+        <div></div>
+      </div>
+
+      ${p.estructuraCopy ? renderEstructuraPreview(p.estructuraCopy) : ""}
+    </div>
+  `;
+}
+
+function renderCustomInput(placeholder, value, ci, cji, pi, field) {
+  return `
+    <input type="text" class="custom-input-inline" placeholder="${placeholder}"
+      value="${escapeHTML(value || '')}"
+      oninput="state.campanas[${ci}].conjuntos[${cji}].piezas[${pi}]._customs.${field} = this.value">
+  `;
+}
+
+function updatePiezaField(ci, cji, pi, field, valor) {
+  state.campanas[ci].conjuntos[cji].piezas[pi][field] = valor;
+  render();
+}
+
+function renderEstructuraPreview(nombre) {
+  const e = ESTRUCTURAS_COPY.find(x => x.nombre === nombre);
+  if (!e) return "";
+  return `
+    <div style="margin-top: 8px; padding: 8px 10px; background: var(--white); border: 0.5px solid var(--border-light); border-radius: 6px;">
+      <div style="font-size: 9px; color: var(--carbon); letter-spacing: 1px; font-weight: 600;">${e.label}</div>
+    </div>
+  `;
+}
+
+function agregarCampana() {
+  state.campanas.push(newCampana(`Campaña ${state.campanas.length + 1}`));
+  render();
+}
+function eliminarCampana(ci) {
+  if (confirm("¿Eliminar esta campaña completa?")) {
+    state.campanas.splice(ci, 1);
+    render();
+  }
+}
+function agregarConjunto(ci) {
+  state.campanas[ci].conjuntos.push(newConjunto());
+  render();
+}
+function eliminarConjunto(ci, cji) {
+  if (confirm("¿Eliminar este conjunto y sus piezas?")) {
+    state.campanas[ci].conjuntos.splice(cji, 1);
+    render();
+  }
+}
+function agregarPieza(ci, cji, estado) {
+  state.campanas[ci].conjuntos[cji].piezas.push(newPieza(estado));
+  render();
+}
+function eliminarPieza(ci, cji, pi) {
+  state.campanas[ci].conjuntos[cji].piezas.splice(pi, 1);
+  render();
+}
+function duplicarPiezas(ci) {
+  const camp = state.campanas[ci];
+  const piezasBase = camp.conjuntos[0].piezas;
+  if (!piezasBase.length) return alert("El conjunto 1 no tiene piezas para duplicar.");
+  if (!confirm(`¿Copiar las ${piezasBase.length} piezas del Conjunto 1 a los demás conjuntos?`)) return;
+  for (let i = 1; i < camp.conjuntos.length; i++) {
+    camp.conjuntos[i].piezas = piezasBase.map(p => ({
+      ...p,
+      id: "P" + Math.random().toString(36).substr(2, 5).toUpperCase(),
+      _customs: {...(p._customs || {})}
+    }));
+  }
+  render();
+}
+function renderResumen() {
+  let totalCamp = state.campanas.length;
+  let totalConj = 0, totalPiezas = 0, totalActivas = 0, totalReserva = 0;
+  state.campanas.forEach(c => {
+    totalConj += c.conjuntos.length;
+    c.conjuntos.forEach(cj => {
+      totalPiezas += cj.piezas.length;
+      totalActivas += cj.piezas.filter(p => p.estado === "activa").length;
+      totalReserva += cj.piezas.filter(p => p.estado === "reserva").length;
+    });
+  });
+  return `
+    <div class="summary">
+      <strong>Resumen:</strong> ${totalCamp} campaña${totalCamp!==1?"s":""} · ${totalConj} conjunto${totalConj!==1?"s":""} · ${totalPiezas} pieza${totalPiezas!==1?"s":""} (${totalActivas} activas + ${totalReserva} reserva) · Presupuesto: ${state.tipoPresupuesto}
+    </div>
+  `;
+}
+
+// ============================================
+// STEP 6
+// ============================================
+function renderStep6() {
+  const modo = state.presupuestoModo;
+  const valor = parseMoney(state.presupuestoValor || "");
+  const diario = modo === "mensual" && valor ? Math.round(parseInt(valor) / 30) : valor;
+  const mensual = modo === "diario" && valor ? parseInt(valor) * 30 : valor;
+  const isEvergreen = state.tipoCampana === "evergreen";
+  return `
+    <div class="step-label">Paso 6 · Presupuesto</div>
+    <h2 class="step-question">Configura tu inversión</h2>
+    <p class="step-help">Tipo: <strong>${state.tipoPresupuesto}</strong> · ${state.tipoPresupuesto === 'ABO' ? 'Se distribuye por conjunto' : 'Meta optimiza el presupuesto global'}</p>
+
+    <div class="toggle-group">
+      <button class="toggle-btn ${modo === 'diario' ? 'active' : ''}" onclick="state.presupuestoModo='diario'; render()">Ingresar diario</button>
+      <button class="toggle-btn ${modo === 'mensual' ? 'active' : ''}" onclick="state.presupuestoModo='mensual'; render()">Ingresar mensual</button>
+    </div>
+
+    <div class="field">
+      <label class="field-label">Presupuesto ${modo === 'diario' ? 'diario' : 'mensual'} (COP)</label>
+      <input type="text" class="input" placeholder="0"
+        value="${formatMoney(valor)}"
+        oninput="state.presupuestoValor = parseMoney(this.value); this.value = formatMoney(state.presupuestoValor); updateCalculos();">
+    </div>
+
+    <div class="summary" id="calculos">
+      ${modo === 'mensual' ? `<strong>Diario equivalente:</strong> $${formatMoney(diario)} COP` : `<strong>Mensual equivalente:</strong> $${formatMoney(mensual)} COP`}
+    </div>
+
+    <div class="field" style="margin-top: 20px;">
+      <label class="field-label">Periodo</label>
+      <div class="row-2">
+        <div>
+          <div class="mini-label">Fecha inicio</div>
+          <input type="date" class="input" style="padding: 10px 14px;"
+            value="${state.fechaInicio}"
+            oninput="state.fechaInicio = this.value">
+        </div>
+        <div>
+          <div class="mini-label">Fecha fin ${state.sinFechaFin ? '(deshabilitada)' : ''}</div>
+          <input type="date" class="input" style="padding: 10px 14px;"
+            ${state.sinFechaFin ? "disabled" : ""}
+            value="${state.fechaFin}"
+            oninput="state.fechaFin = this.value">
+        </div>
+      </div>
+      ${isEvergreen ? `
+        <div class="checkbox-wrap">
+          <input type="checkbox" id="sinFechaFin" ${state.sinFechaFin ? "checked" : ""}
+            onchange="state.sinFechaFin = this.checked; if(this.checked) state.fechaFin=''; render()">
+          <label for="sinFechaFin">Sin fecha fin (campaña evergreen siempre activa)</label>
+        </div>
+      ` : ""}
+    </div>
+  `;
+}
+function updateCalculos() {
+  const el = document.getElementById("calculos");
+  if (!el) return;
+  const modo = state.presupuestoModo;
+  const valor = parseMoney(state.presupuestoValor || "");
+  if (!valor) { el.innerHTML = "<em>Ingresa un valor para ver el cálculo</em>"; return; }
+  const diario = modo === "mensual" ? Math.round(parseInt(valor) / 30) : parseInt(valor);
+  const mensual = modo === "diario" ? parseInt(valor) * 30 : parseInt(valor);
+  el.innerHTML = modo === 'mensual' ? `<strong>Diario equivalente:</strong> $${formatMoney(diario)} COP` : `<strong>Mensual equivalente:</strong> $${formatMoney(mensual)} COP`;
+}
+
+// ============================================
+// STEP 7
+// ============================================
+function renderStep7() {
+  return `
+    <div class="step-label">Paso 7 · Equipo</div>
+    <h2 class="step-question">Equipo responsable</h2>
+    <p class="step-help">Revisa o edita los emails del equipo asignado.</p>
+    <div class="field">
+      ${state.equipo.map((m, i) => `
+        <div class="team-row">
+          <input type="text" placeholder="Rol" value="${escapeHTML(m.rol)}" oninput="state.equipo[${i}].rol = this.value">
+          <input type="email" placeholder="email@tennispremiumcol.com" value="${escapeHTML(m.email)}" oninput="state.equipo[${i}].email = this.value">
+          <button class="btn-link btn-danger" onclick="eliminarPersona(${i})" style="font-size: 18px; line-height: 1;">×</button>
+        </div>
+      `).join("")}
+      <button class="btn-add-dashed" onclick="agregarPersona()">+ Agregar persona</button>
+    </div>
+  `;
+}
+function agregarPersona() { state.equipo.push({ rol: "", email: "" }); render(); }
+function eliminarPersona(i) { state.equipo.splice(i, 1); render(); }
+
+// ============================================
+// STEP 8 · PROMPT OUTPUT
+// ============================================
+function renderPromptOutput() {
+  const prompt = generarPromptMaestro();
+  return `
+    <div class="step-label">Prompt Maestro</div>
+    <h2 class="step-question">Prompt listo para Claude Code</h2>
+    <p class="step-help">Cópialo y pégalo en Claude Code para que genere el brief Word profesional.</p>
+    <div class="prompt-output" id="promptOutput">${escapeHTML(prompt)}</div>
+    <div class="action-buttons">
+      <button class="btn btn-primary" onclick="copiarPrompt()">📋 Copiar prompt</button>
+      <button class="btn btn-primary" onclick="descargarPrompt()">⬇ Descargar .txt</button>
+      <button class="btn btn-secondary" onclick="nuevoBrief()">+ Nueva campaña</button>
+    </div>
+  `;
+}
+
+function val(piezaVal, customVal) {
+  return piezaVal === "__custom__" ? (customVal || "(sin especificar)") : (piezaVal || "(sin especificar)");
+}
+
+function generarPromptMaestro() {
+  const fecha = new Date().toLocaleDateString('es-CO');
+  const tipoCamp = state.tipoCampana === "evergreen" ? "EVERGREEN" : "ESTACIONAL";
+  const evento = state.eventoEstacional === "__custom__" ? state.eventoCustom : state.eventoEstacional;
+  const ofertaMap = {
+    escalonada: "Escalonada por cantidad (1 par envío gratis · 2 pares -10% · 3 pares -15% · 4+ -20%)",
+    descuento: "Descuento fijo porcentual",
+    "2x1": "2x1 o combos",
+    envio: "Envío gratis",
+    financiacion: "Financiación destacada (Addi/Sistecrédito)",
+    otra: state.otraOferta
+  };
+  const ofertaDesc = ofertaMap[state.tipoOferta] || "No definida";
+
+  let contextoEspecial = "";
+  if (evento && evento.includes("Primatón")) {
+    contextoEspecial = `
+CONTEXTO ESPECIAL · PRIMATÓN:
+La Primatón es una campaña de Serrano Group que aprovecha el pago legal de primas en Colombia
+(30 de junio y 20 de diciembre), cuando la gente tiene dinero extra disponible.
+Los ángulos deben conectar con: "ya tienes con qué, date el gusto", "aprovecha la prima antes
+de que se vaya", "sé inteligente con el dinero extra".
+`;
+  }
+
+  let hayVideos = false;
+  state.campanas.forEach(c => c.conjuntos.forEach(cj => cj.piezas.forEach(p => {
+    const tp = val(p.tipoPieza, p._customs?.tipoPieza);
+    if (tp && (tp.toLowerCase().includes("video"))) hayVideos = true;
+  })));
+
+  // Generar listado de modelos con precios
+  let modelosConPrecios = state.modelosSeleccionados.map(m => {
+    const precio = state.preciosModelos[m] || {};
+    if (precio.antes || precio.ahora) {
+      const antes = precio.antes ? `$${formatMoney(precio.antes)}` : "";
+      const ahora = precio.ahora ? `$${formatMoney(precio.ahora)}` : "";
+      if (antes && ahora) return `- ${m}: ${ahora} (antes ${antes})`;
+      if (ahora) return `- ${m}: ${ahora}`;
+      return `- ${m}: ${antes}`;
+    }
+    return `- ${m}: (sin precio definido)`;
+  }).join("\n");
+
+  let prompt = `# BRIEF DE CAMPAÑA · SERRANO GROUP
+# Generado: ${fecha}
+# ═══════════════════════════════════════════════════════════
+
+## 1 · IDENTIFICACIÓN
+- Empresa: ${state.empresa}
+- Campaña: ${state.nombreCampana}
+- Tipo: ${tipoCamp}${evento ? ` · ${evento}` : ""}
+
+## 2 · CONTEXTO DEL BRIEF
+- Contexto de la campaña: ${state.contextoCampana || "(No especificado)"}
+- Objetivo de la campaña: ${state.objetivoCampana || "(No especificado)"}
+- Público objetivo: ${state.publicoObjetivo || "(No especificado)"}
+- Insight / Mensaje clave: ${state.insightMensajeClave || "(No especificado)"}
+- Propuestas de valor de la marca: ${state.propuestasValor || "(No especificado)"}
+- Tono y estilo: ${state.tonoYestilo || "(No especificado)"}
+- Llamada a la acción: ${state.llamadaAccion || "(No especificada)"}
+- Qué NO hacer: ${state.queNOhacer || "(No especificado)"}
+
+## 3 · OFERTA
+- Tipo: ${ofertaDesc}
+- Contexto: ${state.contextoOferta || "(No especificado)"}
+${contextoEspecial}
+## 4 · MODELOS DISPONIBLES CON PRECIOS
+${modelosConPrecios}
+
+## 5 · ESTRUCTURA META ADS
+- Objetivo del brief: ${state.objetivo}
+- Tipo de presupuesto: ${state.tipoPresupuesto} ${state.tipoPresupuesto === 'ABO' ? '(presupuesto por conjunto — manual)' : '(presupuesto global — Meta optimiza)'}
+
+`;
+
+  state.campanas.forEach((c, ci) => {
+    prompt += `### CAMPAÑA ${ci + 1}: ${c.nombre}\n\n`;
+    c.conjuntos.forEach((conj, cji) => {
+      const publicoFinal = conj.publico === "__custom__" ? conj.publicoCustom : conj.publico;
+      prompt += `#### CONJUNTO ${cji + 1}: ${conj.nombre}\n`;
+      prompt += `- Público: ${publicoFinal || "(no definido)"}\n`;
+      if (state.tipoPresupuesto === 'ABO') prompt += `- % presupuesto: ${conj.porcentaje}%\n`;
+      prompt += `- Piezas: ${conj.piezas.length}\n\n`;
+
+      conj.piezas.forEach((p, pi) => {
+        const c = p._customs || {};
+        const modeloFinal = val(p.modelo, c.modelo);
+        const precio = state.preciosModelos[modeloFinal];
+        let precioStr = "";
+        if (precio && (precio.antes || precio.ahora)) {
+          if (precio.antes && precio.ahora) precioStr = ` · $${formatMoney(precio.ahora)} (antes $${formatMoney(precio.antes)})`;
+          else if (precio.ahora) precioStr = ` · $${formatMoney(precio.ahora)}`;
+          else precioStr = ` · $${formatMoney(precio.antes)}`;
+        }
+        prompt += `##### PIEZA ${pi + 1} · ${p.id} · ${p.estado.toUpperCase()}\n`;
+        prompt += `- Modelo: ${modeloFinal}${precioStr}\n`;
+        prompt += `- Tipo de pieza: ${val(p.tipoPieza, c.tipoPieza)}${p.tipoPieza === "Carrusel" ? ` (${p.carruselSlides} slides)` : ""}\n`;
+        prompt += `- Formato / medidas: ${val(p.formato, c.formato)}\n`;
+        prompt += `- Ángulo: ${val(p.angulo, c.angulo)}\n`;
+        prompt += `- Tráfico: ${val(p.trafico, c.trafico)}\n`;
+        prompt += `- Nivel conciencia: ${val(p.conciencia, c.conciencia)}\n`;
+        prompt += `- Motivo: ${val(p.motivo, c.motivo)}\n`;
+        prompt += `- Narrativa: ${val(p.narrativa, c.narrativa)}\n`;
+        prompt += `- Estructura del copy: ${p.estructuraCopy || "(No especificada)"}\n\n`;
+      });
+    });
+  });
+
+  prompt += `
+## 6 · PRESUPUESTO
+- Modo: ${state.presupuestoModo}
+- Valor ${state.presupuestoModo}: $${formatMoney(state.presupuestoValor)} COP
+- Fecha inicio: ${state.fechaInicio || "No definida"}
+- Fecha fin: ${state.sinFechaFin ? "SIN FECHA FIN (evergreen siempre activa)" : state.fechaFin || "No definida"}
+
+## 7 · EQUIPO
+${state.equipo.filter(e => e.rol && e.email).map(e => `- ${e.rol}: ${e.email}`).join("\n")}
+
+# ═══════════════════════════════════════════════════════════
+# INSTRUCCIONES PARA CLAUDE CODE
+# ═══════════════════════════════════════════════════════════
+
+Actúa como el director creativo y copywriter senior de Serrano Group.
+
+## FORMATO DE ENTREGA: DOCUMENTO WORD (.docx)
+
+Entrega el brief completo como un archivo Microsoft Word (.docx) con diseño profesional tipo reporte ejecutivo.
+
+ESTRUCTURA DEL WORD:
+1. Portada (logo Serrano Group + nombre campaña + fecha)
+2. Índice con 10 secciones numeradas
+3. Resumen ejecutivo (con tabla de datos clave)
+4. Contexto y objetivos
+5. Oferta comercial
+6. Público objetivo
+7. Insight y mensaje clave (con blockquote destacado)
+8. Propuesta de valor
+9. Tono y lenguaje
+10. Estructura Meta Ads (con tablas por campaña)
+11. Guiones y copys POR PIEZA (sección más extensa)
+12. Especificaciones técnicas finales
+
+DISEÑO DEL WORD:
+- Paleta Serrano Group: grafito #333333, carbón #4B4441, crema #FAFAF9, dorado #C8A47E
+- Tipografía Arial
+- Header en cada página: "SERRANO GROUP · CAMPAIGN BRIEF"
+- Footer con paginación "Pág. X de Y"
+- Tablas con bordes suaves color #D8D4D0
+- Celdas de encabezado con fondo crema
+- Blockquotes con barra lateral dorada izquierda
+- Separadores horizontales dorados entre secciones
+
+POR CADA PIEZA el Word debe incluir TODOS estos 18 elementos:
+
+1. Tabla-resumen con los atributos:
+   - Modelo de zapato (con precio antes/ahora si está disponible)
+   - Tipo de pieza
+   - Formato / medidas
+   - Ángulo de venta
+   - Tráfico
+   - Nivel de conciencia
+   - Motivo emocional
+   - Narrativa
+   - Estructura del copy (PAS/AIDA/FAB/BAB/4U/Storytelling)
+   - Duración del video (si aplica)
+   - Registro de voz usado
+   - Tipo de hook elegido
+
+2. Guion completo con tabla de timestamps (si es video)
+   O brief visual detallado (si es imagen estática/carrusel)
+
+3. Copy del ad (caja destacada con fondo crema):
+   - Primary Text (con estructura aplicada)
+   - Headline 1 (con conteo de caracteres verificado ≤ 27)
+   - Headline 2 (alternativa genuina, ≤ 27 caracteres)
+   - Descripción (una frase)
+   - CTA del botón (acorde al objetivo)
+
+4. Checklist de verificaciones (12 puntos de control)
+
+# ═══════════════════════════════════════════════════════════
+# MÓDULO DE REDACCIÓN PROFESIONAL
+# ═══════════════════════════════════════════════════════════
+
+## REGLA ESTRUCTURAL OBLIGATORIA
+
+Cada pieza entregada debe contener DOS bloques separados y claramente etiquetados:
+1. GUION DE LA PIEZA (según formato: video, imagen estática, carrusel)
+2. COPY DEL AD (Primary Text, Headlines, Descripción, CTA)
+
+AMBOS bloques deben seguir la misma estructura de copywriting indicada (PAS, AIDA, FAB, BAB, 4U o Storytelling).
+No mezclar estructuras dentro de una misma pieza.
+
+Referencia obligatoria de estructuras:
+- PAS: Problema (dolor visible) → Agitación (consecuencias si no actúa) → Solución (producto + CTA)
+- AIDA: Atención (hook) → Interés (dato/promesa) → Deseo (beneficio emocional) → Acción (CTA)
+- FAB: Features (atributos) → Advantages (lo que permite) → Benefits (cómo mejora la vida)
+- BAB: Before (situación actual) → After (situación deseada) → Bridge (el producto es el puente)
+- 4U: Útil + Urgente + Único + Específico
+- Storytelling: Personaje identificable + conflicto + transformación + moraleja/CTA
+
+## DIVERSIFICACIÓN DE REGISTROS DE VOZ
+
+NO redactar todas las piezas con el mismo registro. Si hay 4+ piezas, asignar al menos 3 registros distintos:
+
+- Juvenil Gen Z (22-30): "literal", "no les miento", "la verdad", "chicas"
+- Coloquial colombiano cálido (30-50): "parce", "ve", "mija/mijo", "pa'", "ome"
+- Formal-cálido (35-60): Sin modismos, tono respetuoso, cercano, profesional
+- Neutro informativo: Factual, directo, con datos
+- Emotivo directo: Tono cálido sin slang, frases cortas, pausas dramáticas
+- Cómplice/amiga: "Sé que lo pensaste", "entre nos", "yo también estaba ahí"
+
+Al inicio de cada pieza, etiqueta el registro y justifica en una línea.
+
+## REGLAS LEGALES Y ÉTICAS (NUNCA VIOLAR)
+
+PROHIBIDO ABSOLUTO en copys y guiones:
+❌ "original", "originales"
+❌ "triple A", "AAA"
+❌ "importado", "importados"
+❌ "réplica", "imitación", "copia", "fake"
+❌ Mencionar marcas competidoras directamente
+❌ Inventar cifras sociales ("93 clientes este mes", "miles de mamás felices")
+❌ Inventar reviews, testimonios o nombres de clientes
+❌ Prometer tiempos de entrega nacionales absolutos
+❌ Lenguaje que denigre al comprador ("no seas mal hijo", "deja de ser tacaño")
+
+USAR EN SU LUGAR:
+✅ "calidad garantizada"
+✅ "materiales premium"
+✅ "construcción duradera"
+✅ "acabados cuidados"
+✅ "garantía Tennispremium"
+✅ "estándar premium"
+✅ "24-72h en ciudades principales" (con cobertura matizada)
+
+## DIVERSIDAD OBLIGATORIA ENTRE PIEZAS
+
+Aunque varias piezas tengan el mismo ángulo o modelo, el enfoque, la voz, las palabras, las metáforas y los ejemplos DEBEN ser DIFERENTES.
+
+PROHIBIDO:
+- Repetir los mismos hooks entre piezas
+- Repetir las mismas frases de cierre
+- Repetir los mismos CTAs literales
+- Repetir la misma estructura de apertura
+
+## DURACIÓN DE VIDEOS
+${hayVideos ? `
+Los videos deben VARIAR en duración entre piezas (15-60 segundos):
+- 15-20 segundos: Óptima para feed y Reels (priorizar cuando se dude)
+- 21-30 segundos: Útil para público frío que necesita contexto
+- 31-45 segundos: Solo si narrativa lo justifica
+- 46-60 segundos: Casos específicos (storytelling profundo)
+
+Principios:
+- Hook: máximo primer tercio del video
+- Re-enganche cada 7-10 segundos
+- Precio visible antes del 50% del tiempo total
+- CTA en el último 20%
+- Último frame estático con logo + CTA + oferta
+` : '(No hay piezas de video en este brief)'}
+
+## TIPOS DE HOOK (elegir según ángulo y público)
+
+1. Hook de producto
+2. Hook de problema
+3. Hook de pregunta directa
+4. Hook de declaración polémica
+5. Hook de estadística (solo si es verificable)
+6. Hook de escena cotidiana reconocible
+7. Hook de resultado/transformación primero
+8. Hook de testimonio inmediato (para UGC)
+9. Hook de contraste visual
+10. Hook de celebridad/referente
+11. Hook de pattern interrupt
+12. Hook de confesión/vulnerabilidad (para UGC)
+13. Hook de lista numerada
+14. Hook de urgencia temporal
+15. Hook de objeción anticipada
+
+Al redactar, declara qué hook usas y justifica por qué ese hook para esa pieza.
+
+## ESTRUCTURA INTERNA SEGÚN ÁNGULO
+
+- Ángulo Problema/Dolor: Problema → Agitación → Producto → Oferta → CTA
+- Ángulo Beneficios: Producto en uso → Beneficio visible → Por qué esta marca → Oferta → CTA
+- Ángulo Prueba social: Testimonio → Producto → Más testimonios → Oferta → CTA
+- Ángulo Aspiracional: Transformación → Producto como puente → Oferta → CTA
+- Ángulo Confianza: Credencial → Producto → Explicación → Oferta → CTA
+
+## REGLAS ESPECÍFICAS UGC
+- El guion es guía, NO script cerrado
+- Libertad para reformular con palabras propias
+- Incluir al menos UNA imperfección intencional (pausa, "emmm", corrección)
+- El precio NUNCA lo dice la voz del creador (va en overlay)
+- Grabar vertical 9:16, luz natural
+- Adaptar registro al perfil demográfico real del creador
+
+## REGLAS ESPECÍFICAS VIDEO IN-HOUSE ("Videos por nosotros")
+- SÍ puede y debe sonar producido
+- Beauty shots del producto, transiciones limpias, música profesional
+- La diferencia con UGC debe ser evidente en los primeros 3 segundos
+- Mayor control sobre iluminación, encuadre y ritmo
+
+## REGLAS IMAGEN ESTÁTICA
+- Máximo 5 bloques de información: hook, producto, precio, oferta, CTA
+- Mantener texto conciso (<20% área total)
+- Precio como segundo elemento de mayor jerarquía
+- CTA como botón visible
+- Paleta limitada a 3 colores máximo
+
+## REGLAS CARRUSELES
+- Slide 1: Hook fuerte que obligue a deslizar
+- Slides intermedios: Un solo mensaje, imagen y texto por slide
+- Slide final: CTA + precio + oferta
+- Máximo 3-5 slides
+
+## REGLAS COPY DEL AD
+
+Primary Text:
+- Aplicar estructura elegida de forma explícita
+- Primera línea = hook (antes del "ver más")
+- Emojis con parsimonia (máx 1 cada 2-3 líneas)
+- Incluir: beneficio, precio, oferta, urgencia con fecha, CTA
+- Saltos de línea para legibilidad mobile
+- Extensión ideal: 80-150 palabras
+
+Headlines (1 y 2):
+- MÁXIMO 27 caracteres (contar explícitamente)
+- H1: beneficio principal o precio
+- H2: genuinamente distinta (oferta, pago, urgencia)
+- Evitar frases vacías como "la mejor opción"
+
+CTA del botón según objetivo:
+- Ventas → "Comprar ahora", "Pedir ahora"
+- Tráfico → "Más información", "Ver más"
+- Mensajes → "Enviar mensaje", "Escribir"
+- Leads → "Registrarse", "Obtener oferta"
+
+## VERIFICACIONES FINALES POR PIEZA
+
+Antes de cerrar cada pieza, revisar:
+☐ Estructura declarada se cumple en guion Y copy
+☐ Registro de voz distinto de piezas previas
+☐ Sin palabras prohibidas (original, réplica, AAA, importado)
+☐ Sin mencionar competidores
+☐ Cifras verificables (no inventadas)
+☐ Precio real del cliente (no inventado)
+☐ Tiempos de entrega matizados por cobertura
+☐ CTA corresponde al objetivo
+☐ Headlines ≤ 27 caracteres (verificado contando)
+☐ Modismos coinciden con edad del target
+☐ Ángulo se refleja en primeros segundos
+☐ Hook declarado y justificado
+
+## FORMATO FINAL DE ENTREGA POR PIEZA
+
+Para cada pieza usar este formato en el Word:
+
+━━━ PIEZA [ID] · [Modelo/Producto] ━━━
+
+Tabla de atributos:
+| Modelo      | [modelo + precio]        |
+| Tipo pieza  | [tipo]                   |
+| Formato     | [9:16/1:1/4:5]          |
+| Ángulo      | [ángulo]                 |
+| Tráfico     | [frío/tibio/caliente]    |
+| Conciencia  | [nivel Schwartz]         |
+| Motivo      | [emocional/racional/social] |
+| Narrativa   | [narrativa]              |
+| Estructura  | [PAS/AIDA/FAB/BAB/4U/Storytelling] |
+| Duración    | [15-60s, solo si video]  |
+| Registro    | [registro de voz]        |
+| Hook        | [tipo de hook]           |
+
+📹 GUION ([formato])
+[Guion con timestamps + tono + ritmo + elementos visuales]
+
+Estructura aplicada:
+- [Elemento 1]: [cómo se manifiesta]
+- [Elemento 2]: [cómo se manifiesta]
+- [Elemento 3]: [cómo se manifiesta]
+
+📝 COPY DEL AD (Meta Ads Manager)
+
+Primary Text:
+[Cuerpo con estructura aplicada]
+
+Tabla:
+| Campo       | Texto               | Caracteres |
+| Headline 1  | [texto]             | [N]/27     |
+| Headline 2  | [texto]             | [N]/27     |
+| Descripción | [una frase]         | -          |
+| CTA botón   | [texto botón]       | -          |
+
+🔍 Verificaciones: [checklist completo]
+
+## PRINCIPIOS GENERALES
+
+- Una pieza = una idea. No intentar decir todo
+- Mostrar, no contar
+- Producto es el protagonista en Ventas; personaje lo es en Reconocimiento
+- Especificidad vende, genericidad no
+- Tono colombiano natural ≠ slang forzado
+- Cada pieza debe sobrevivir sin las otras
+
+IMPORTANTE: Entrega TODO en un solo documento Word (.docx) con el diseño profesional especificado.
+
+Empieza el trabajo.
+`;
+
+  return prompt;
+}
+
+function copiarPrompt() {
+  const prompt = generarPromptMaestro();
+  navigator.clipboard.writeText(prompt).then(() => {
+    const s = document.getElementById("copySuccess");
+    s.classList.add("visible");
+    setTimeout(() => s.classList.remove("visible"), 2000);
+  }).catch(() => {
+    const t = document.createElement("textarea");
+    t.value = prompt;
+    document.body.appendChild(t);
+    t.select();
+    document.execCommand("copy");
+    document.body.removeChild(t);
+    alert("Prompt copiado ✓");
+  });
+}
+function descargarPrompt() {
+  const prompt = generarPromptMaestro();
+  const fecha = new Date().toISOString().split("T")[0];
+  const nombre = (state.nombreCampana || "campana").replace(/[^\w]/g, "_");
+  const blob = new Blob([prompt], { type: "text/plain;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = `${fecha}_${nombre}_serrano_brief.txt`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+function nuevoBrief() {
+  if (!confirm("¿Empezar una nueva campaña? Los datos actuales se perderán.")) return;
+  location.reload();
+}
+
+// ============================================
+// NAVEGACIÓN + VALIDACIÓN
+// ============================================
+function validarPaso(paso) {
+  if (paso === 1 && !state.empresa.trim()) return "Ingresa el nombre de la empresa";
+  if (paso === 2) {
+    if (!state.nombreCampana.trim()) return "Ingresa el nombre de la campaña";
+    if (!state.tipoCampana) return "Selecciona evergreen o estacional";
+    if (state.tipoCampana === "estacional" && !state.eventoEstacional) return "Selecciona un evento estacional";
+    if (state.eventoEstacional === "__custom__" && !state.eventoCustom.trim()) return "Escribe el evento custom";
+  }
+  if (paso === 3 && !state.tipoOferta) return "Selecciona un tipo de oferta";
+  if (paso === 4 && state.modelosSeleccionados.length === 0) return "Selecciona al menos un modelo";
+  if (paso === 5) {
+    if (!state.objetivo) return "Selecciona el objetivo del brief";
+    if (!state.tipoPresupuesto) return "Selecciona ABO o CBO";
+    let totalPiezas = 0;
+    state.campanas.forEach(c => c.conjuntos.forEach(cj => totalPiezas += cj.piezas.length));
+    if (totalPiezas === 0) return "Agrega al menos una pieza a algún conjunto";
+    // #11: Validar 100% en ABO
+    if (state.tipoPresupuesto === "ABO") {
+      for (let ci = 0; ci < state.campanas.length; ci++) {
+        const camp = state.campanas[ci];
+        let suma = 0;
+        camp.conjuntos.forEach(cj => suma += (parseInt(cj.porcentaje) || 0));
+        if (suma !== 100) {
+          return `El % del presupuesto de la Campaña ${ci + 1} suma ${suma}% — debe sumar 100%`;
+        }
+      }
+    }
+  }
+  if (paso === 6) {
+    if (!state.presupuestoValor) return "Ingresa el presupuesto";
+    if (!state.fechaInicio) return "Ingresa la fecha de inicio";
+    if (!state.sinFechaFin && !state.fechaFin) return "Ingresa la fecha de fin o marca evergreen";
+  }
+  return null;
+}
+
+function goNext() {
+  const err = validarPaso(state.currentStep);
+  if (err) { alert("⚠ " + err); return; }
+  if (state.currentStep < 7) state.currentStep++;
+  else if (state.currentStep === 7) state.currentStep = 8;
+  render();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+function goBack() {
+  if (state.currentStep > 1) {
+    if (state.currentStep === 8) state.currentStep = 7;
+    else state.currentStep--;
+    render();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
+}
+
+// Inicializar
+render();
+</script>
+</body>
+</html>
