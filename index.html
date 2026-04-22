@@ -28,7 +28,7 @@
 }
 body { font-family: var(--font); background: var(--cream); color: var(--graphite); margin: 0; padding: 0; line-height: 1.5; -webkit-font-smoothing: antialiased; }
 .app { max-width: 860px; margin: 0 auto; min-height: 100vh; background: var(--white); border-left: 0.5px solid var(--border-light); border-right: 0.5px solid var(--border-light); }
-.header { padding: 28px 32px 22px; border-bottom: 0.5px solid var(--border-light); background: var(--cream); text-align: center; }
+.header { padding: 28px 32px 22px; border-bottom: 0.5px solid var(--border-light); background: var(--cream); text-align: center; position: relative; }
 .header img { height: 48px; width: auto; margin-bottom: 10px; }
 .header-title { font-size: 20px; font-weight: 400; color: var(--graphite); letter-spacing: -0.3px; margin: 0 0 4px; }
 .header-sub { font-size: 12px; color: var(--text-soft); font-weight: 300; letter-spacing: 0.3px; margin: 0; }
@@ -314,6 +314,20 @@ body { font-family: var(--font); background: var(--cream); color: var(--graphite
 .confirm-modal-cancel:hover { background: var(--cream); color: var(--graphite); }
 .confirm-modal-ok { background: var(--graphite); color: var(--white); border-color: var(--graphite); }
 .confirm-modal-ok:hover { background: var(--carbon); }
+/* v3.8 · Pantalla de login */
+#lockScreen { position: fixed; inset: 0; background: var(--cream); z-index: 10000; display: flex; align-items: center; justify-content: center; padding: 20px; }
+.lock-card { background: var(--white); border: 0.5px solid var(--border-light); border-radius: 16px; padding: 36px 32px; max-width: 380px; width: 100%; text-align: center; box-shadow: 0 6px 30px rgba(75, 68, 65, 0.08); }
+.lock-logo { width: 48px; height: 48px; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; font-size: 28px; }
+.lock-title { font-size: 17px; font-weight: 600; color: var(--graphite); margin-bottom: 4px; letter-spacing: 0.2px; }
+.lock-sub { font-size: 11.5px; color: var(--text-soft); margin-bottom: 22px; }
+.lock-input { width: 100%; padding: 11px 14px; border: 0.5px solid var(--border); border-radius: 8px; font-size: 13px; font-family: inherit; outline: none; background: var(--white); color: var(--graphite); margin-bottom: 10px; text-align: center; letter-spacing: 2px; }
+.lock-input:focus { border-color: var(--carbon); }
+.lock-btn { width: 100%; padding: 11px; background: var(--graphite); color: var(--white); border: none; border-radius: 8px; font-size: 12.5px; font-weight: 500; font-family: inherit; cursor: pointer; letter-spacing: 0.5px; transition: all 0.15s; }
+.lock-btn:hover { background: var(--carbon); }
+.lock-error { font-size: 11px; color: var(--danger); margin-top: 10px; min-height: 14px; }
+.lock-foot { font-size: 10px; color: var(--silver); letter-spacing: 1.5px; text-transform: uppercase; margin-top: 24px; }
+.logout-btn { background: transparent; border: 0.5px solid var(--border-light); border-radius: 6px; padding: 4px 9px; font-size: 10px; color: var(--text-soft); cursor: pointer; font-family: inherit; transition: all 0.15s; }
+.logout-btn:hover { color: var(--danger); border-color: var(--danger); }
 /* v3.5 · Event chips (eventos estacionales) */
 .event-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
 .event-chip { display: inline-flex; align-items: center; gap: 6px; padding: 7px 11px; background: var(--cream); border: 0.5px solid var(--border-light); border-radius: 8px; cursor: pointer; transition: all 0.15s; user-select: none; }
@@ -441,6 +455,19 @@ body { font-family: var(--font); background: var(--cream); color: var(--graphite
 </style>
 </head>
 <body>
+<!-- v3.8 · Lock screen -->
+<div id="lockScreen" style="display: none;">
+  <div class="lock-card">
+    <div class="lock-logo">🔒</div>
+    <div class="lock-title">Serrano Campaign Builder</div>
+    <div class="lock-sub">Acceso privado · equipo Serrano Group</div>
+    <input type="password" id="lockInput" class="lock-input" placeholder="Contraseña" autocomplete="off" onkeydown="if(event.key==='Enter') tryUnlock()">
+    <button class="lock-btn" onclick="tryUnlock()">Entrar</button>
+    <div class="lock-error" id="lockError"></div>
+    <div class="lock-foot">Tennispremium · Cali</div>
+  </div>
+</div>
+
 <div class="autosave-indicator" id="autosaveIndicator">✓ Guardado</div>
 
 <div class="app">
@@ -448,6 +475,7 @@ body { font-family: var(--font); background: var(--cream); color: var(--graphite
     <img src="logo.png" alt="Serrano Group">
     <div class="header-title">Campaign Builder</div>
     <div class="header-sub">Briefs, guiones y copy para Meta Ads</div>
+    <button class="logout-btn" onclick="logout()" style="position: absolute; top: 12px; right: 16px;">Cerrar sesión</button>
   </div>
   <div class="body" id="body"></div>
   <div class="footer">
@@ -2806,8 +2834,74 @@ function goBack() {
   }
 }
 
-// Inicializar
-render();
+// v3.8 · Sistema de lock (autenticación simple del equipo)
+const LOCK_KEY_V38 = "serrano_session_v38";
+// Clave codificada en base64 para no dejarla en texto plano obvio (reversible, no es seguridad real)
+const LOCK_HASH = "SnVhblNlcnJhbm8qKg==";
+
+function showLock() {
+  document.getElementById("lockScreen").style.display = "flex";
+  document.querySelector(".app").style.display = "none";
+  setTimeout(() => {
+    const input = document.getElementById("lockInput");
+    if (input) input.focus();
+  }, 100);
+}
+
+function hideLock() {
+  document.getElementById("lockScreen").style.display = "none";
+  document.querySelector(".app").style.display = "";
+}
+
+function tryUnlock() {
+  const input = document.getElementById("lockInput");
+  const err = document.getElementById("lockError");
+  const val = input.value;
+  if (!val) {
+    err.textContent = "Ingresa la contraseña";
+    return;
+  }
+  const expected = atob(LOCK_HASH);
+  if (val === expected) {
+    try {
+      localStorage.setItem(LOCK_KEY_V38, "ok");
+    } catch(e) {}
+    err.textContent = "";
+    input.value = "";
+    hideLock();
+    render();
+  } else {
+    err.textContent = "Contraseña incorrecta";
+    input.value = "";
+    input.focus();
+  }
+}
+
+function logout() {
+  showConfirm("¿Cerrar sesión? Tus campañas seguirán guardadas al volver a entrar.", () => {
+    try {
+      localStorage.removeItem(LOCK_KEY_V38);
+    } catch(e) {}
+    showLock();
+  });
+}
+
+function checkSession() {
+  try {
+    const ok = localStorage.getItem(LOCK_KEY_V38);
+    if (ok === "ok") {
+      hideLock();
+      return true;
+    }
+  } catch(e) {}
+  showLock();
+  return false;
+}
+
+// Inicializar: primero chequear sesión, si hay sesión renderizar
+if (checkSession()) {
+  render();
+}
 </script>
 </body>
 </html>
