@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Serrano Campaign Builder v3.1</title>
+<title>Serrano Campaign Builder v3.2</title>
 <style>
 *, *::before, *::after { box-sizing: border-box; }
 :root {
@@ -32,36 +32,161 @@ body { font-family: var(--font); background: var(--cream); color: var(--graphite
 .header img { height: 48px; width: auto; margin-bottom: 10px; }
 .header-title { font-size: 20px; font-weight: 400; color: var(--graphite); letter-spacing: -0.3px; margin: 0 0 4px; }
 .header-sub { font-size: 12px; color: var(--text-soft); font-weight: 300; letter-spacing: 0.3px; margin: 0; }
-.body { padding: 28px 32px; }
-.dots { display: flex; gap: 5px; margin-bottom: 24px; }
-.dot { flex: 1; height: 2px; background: var(--border-light); border-radius: 1px; transition: all 0.3s; }
+
+.body { padding: 20px 32px 28px; }
+
+/* Top bar didáctico */
+.top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; padding-bottom: 12px; border-bottom: 0.5px solid var(--border-light); }
+.step-count { font-size: 11px; color: var(--text-soft); letter-spacing: 1px; }
+.step-count strong { color: var(--graphite); font-size: 13px; font-weight: 600; }
+.help-btn { font-size: 10px; padding: 5px 12px; background: rgba(200,164,126,0.12); color: #8b6a48; border-radius: 14px; font-weight: 600; cursor: pointer; border: none; letter-spacing: 0.3px; font-family: inherit; transition: all 0.2s; }
+.help-btn:hover { background: rgba(200,164,126,0.2); }
+
+/* Progreso mejorado */
+.progress { display: flex; gap: 4px; margin-bottom: 18px; }
+.dot { flex: 1; height: 3px; background: var(--border-light); border-radius: 2px; position: relative; transition: all 0.3s; }
 .dot.active { background: var(--graphite); }
-.dot.done { background: var(--silver); }
-.step-label { font-size: 10px; letter-spacing: 2.5px; color: var(--carbon); text-transform: uppercase; margin-bottom: 8px; font-weight: 600; }
-.step-question { font-size: 20px; font-weight: 400; color: var(--graphite); margin: 0 0 6px; line-height: 1.3; letter-spacing: -0.2px; }
-.step-help { font-size: 12px; color: var(--text-soft); margin-bottom: 20px; font-weight: 300; line-height: 1.5; }
+.dot.active::after { content: ""; position: absolute; width: 9px; height: 9px; background: var(--graphite); border-radius: 50%; top: -3px; left: 50%; transform: translateX(-50%); box-shadow: 0 0 0 3px rgba(51,51,51,0.18); }
+.dot.done { background: var(--accent-2); }
+
+/* Hero card */
+.hero { background: linear-gradient(135deg, rgba(200,164,126,0.1), rgba(250,250,249,1)); padding: 18px; border-radius: 12px; margin-bottom: 16px; display: flex; gap: 14px; align-items: center; border: 0.5px solid rgba(200,164,126,0.28); }
+.hero-emoji { font-size: 34px; flex-shrink: 0; line-height: 1; }
+.hero-content { flex: 1; }
+.hero-label { font-size: 10px; color: var(--accent-1); font-weight: 700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 3px; }
+.hero-title { font-size: 17px; font-weight: 600; color: var(--graphite); margin-bottom: 3px; letter-spacing: -0.2px; }
+.hero-sub { font-size: 11.5px; color: var(--carbon); line-height: 1.4; }
+
+/* Coach */
+.coach { background: var(--white); border: 1px dashed var(--accent-1); border-radius: 10px; padding: 11px 13px; display: flex; gap: 11px; margin-bottom: 16px; align-items: flex-start; }
+.coach-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--graphite); color: var(--accent-1); display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; }
+.coach-text { font-size: 11.5px; color: var(--carbon); line-height: 1.5; }
+.coach-text strong { color: var(--graphite); }
+
+/* Field mejorado */
 .field { margin-bottom: 16px; }
-.field-label { display: block; font-size: 10px; color: var(--carbon); margin-bottom: 6px; letter-spacing: 1.5px; font-weight: 600; text-transform: uppercase; }
-.field-hint { font-size: 11px; color: var(--text-soft); margin-top: 4px; font-style: italic; }
-.field-badge { display: inline-block; font-size: 9px; color: var(--text-soft); background: var(--cream); padding: 2px 8px; border-radius: 10px; margin-left: 6px; letter-spacing: 0.5px; font-weight: 500; text-transform: none; }
+.field-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; }
+.field-label { font-size: 10px; color: var(--carbon); letter-spacing: 1.2px; font-weight: 600; text-transform: uppercase; }
+.field-label-primary { color: var(--graphite); }
+.field-label-primary::before { content: "✦ "; color: var(--accent-1); }
+.field-badge { font-size: 9px; color: var(--accent-1); font-weight: 600; letter-spacing: 0.5px; }
+.field-optional { font-size: 9px; color: var(--text-soft); font-style: italic; }
+
 .input, .textarea, .select { width: 100%; padding: 11px 14px; background: var(--white); border: 0.5px solid var(--border); border-radius: 8px; color: var(--graphite); font-size: 13px; font-family: inherit; outline: none; transition: all 0.2s; }
 .input:focus, .textarea:focus, .select:focus { border-color: var(--carbon); box-shadow: 0 0 0 3px var(--shadow); }
 .input::placeholder, .textarea::placeholder { color: var(--silver); font-weight: 300; }
 .textarea { resize: vertical; min-height: 70px; line-height: 1.5; }
+
+/* Chips de ejemplos */
+.examples-row { display: flex; gap: 6px; margin-top: 8px; flex-wrap: wrap; align-items: center; }
+.examples-label { font-size: 10px; color: var(--text-soft); font-weight: 600; letter-spacing: 0.3px; }
+.example-pill { font-size: 10.5px; padding: 4px 10px; background: var(--cream); border: 0.5px solid var(--border-light); border-radius: 12px; color: var(--carbon); cursor: pointer; transition: all 0.2s; font-family: inherit; border: none; }
+.example-pill:hover { background: var(--white); border: 0.5px solid var(--accent-1); color: var(--graphite); }
+
+.char-counter { font-size: 10px; color: var(--text-soft); text-align: right; margin-top: 4px; }
+
+/* Radio cards */
 .radio-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
 .radio-card { border: 0.5px solid var(--border); border-radius: 10px; padding: 14px; cursor: pointer; transition: all 0.2s; background: var(--white); }
 .radio-card:hover { border-color: var(--carbon); }
 .radio-card.selected { border: 1.5px solid var(--graphite); background: var(--cream); }
 .radio-card-title { font-size: 13px; font-weight: 500; color: var(--graphite); margin-bottom: 3px; }
 .radio-card-desc { font-size: 11px; color: var(--text-soft); font-weight: 300; }
+
+/* Chips */
 .chips { display: flex; flex-wrap: wrap; gap: 6px; }
 .chip { padding: 6px 12px; background: var(--white); border: 0.5px solid var(--border); border-radius: 16px; font-size: 11px; color: var(--text-soft); cursor: pointer; transition: all 0.2s; user-select: none; }
 .chip:hover { border-color: var(--carbon); color: var(--carbon); }
 .chip.active { background: var(--graphite); border-color: var(--graphite); color: var(--white); font-weight: 500; }
+
+/* Modelo precio */
+.modelo-precio-card { background: var(--cream); border: 0.5px solid var(--border-light); border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; transition: all 0.2s; }
+.modelo-precio-card.selected { background: var(--white); border: 1px solid var(--graphite); }
+.modelo-precio-row { display: flex; align-items: center; gap: 12px; }
+.modelo-checkbox { width: 20px; height: 20px; border-radius: 5px; border: 1.5px solid var(--border); background: var(--white); display: flex; align-items: center; justify-content: center; flex-shrink: 0; cursor: pointer; font-size: 12px; color: var(--white); transition: all 0.2s; }
+.modelo-checkbox.checked { background: var(--graphite); border-color: var(--graphite); }
+.modelo-name { flex: 1; font-size: 13px; font-weight: 500; color: var(--graphite); }
+.modelo-name.unselected { color: var(--text-soft); }
+.price-inputs { display: flex; gap: 6px; align-items: center; }
+.price-input { width: 95px; padding: 7px 10px; border: 0.5px solid var(--border); border-radius: 6px; font-size: 11px; font-family: inherit; color: var(--graphite); text-align: right; outline: none; background: var(--white); }
+.price-input:focus { border-color: var(--carbon); }
+.price-input::placeholder { color: var(--silver); }
+.price-label-inline { font-size: 9px; color: var(--text-soft); letter-spacing: 0.5px; font-weight: 600; }
+
+/* Pill */
 .pill { display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; background: var(--cream); border: 0.5px solid var(--border-light); border-radius: 12px; font-size: 11px; color: var(--text-soft); margin-top: 8px; }
 .pill-dot { width: 4px; height: 4px; background: var(--carbon); border-radius: 50%; }
+
+/* Summary */
 .summary { background: var(--cream); border: 0.5px solid var(--border-light); border-radius: 10px; padding: 14px 16px; font-size: 12px; color: var(--text-soft); margin-top: 16px; }
 .summary strong { color: var(--graphite); font-weight: 500; }
+
+/* STEP 5 · Asistente creación automática */
+.auto-builder { background: linear-gradient(135deg, rgba(200,164,126,0.1), rgba(143,166,142,0.04)); border: 1px solid rgba(200,164,126,0.4); border-radius: 12px; padding: 16px; margin-bottom: 16px; }
+.auto-builder-title { font-size: 10px; color: var(--accent-1); font-weight: 700; letter-spacing: 1.8px; text-transform: uppercase; margin-bottom: 4px; }
+.auto-builder-heading { font-size: 14px; font-weight: 600; color: var(--graphite); margin-bottom: 12px; }
+
+.mode-toggle { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 14px; }
+.mode-card { border: 1px solid var(--border); border-radius: 10px; padding: 12px; cursor: pointer; background: var(--white); transition: all 0.2s; }
+.mode-card:hover { border-color: var(--carbon); }
+.mode-card.selected { border: 1.5px solid var(--graphite); background: var(--cream); }
+.mode-card-header { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+.mode-icon { font-size: 18px; }
+.mode-title { font-size: 12px; font-weight: 600; color: var(--graphite); }
+.mode-desc { font-size: 10px; color: var(--text-soft); line-height: 1.3; }
+
+.layer { margin-bottom: 12px; }
+.layer-header { display: flex; align-items: center; gap: 10px; margin-bottom: 6px; }
+.layer-icon { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 14px; flex-shrink: 0; color: var(--white); font-weight: 600; }
+.layer-icon.c1 { background: var(--graphite); }
+.layer-icon.c2 { background: var(--accent-1); }
+.layer-icon.c3 { background: var(--accent-2); }
+.layer-name { font-size: 12px; font-weight: 600; color: var(--graphite); }
+.layer-desc { font-size: 10px; color: var(--text-soft); }
+
+.stepper { display: flex; align-items: center; gap: 8px; background: var(--white); border: 0.5px solid var(--border); border-radius: 10px; padding: 6px; }
+.stepper-btn { width: 30px; height: 30px; border: none; background: var(--cream); color: var(--graphite); border-radius: 6px; font-size: 15px; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.15s; }
+.stepper-btn:hover { background: var(--border-light); }
+.stepper-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+.stepper-val { flex: 1; font-size: 17px; font-weight: 600; color: var(--graphite); text-align: center; }
+.stepper-label { font-size: 9.5px; color: var(--text-soft); font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; width: 75px; text-align: right; padding-right: 6px; }
+
+.personalized-list { background: var(--white); border-radius: 10px; padding: 12px; border: 0.5px solid var(--border-light); margin-bottom: 12px; }
+.conj-row { display: flex; align-items: center; gap: 10px; padding: 8px 10px; background: var(--cream); border-radius: 8px; margin-bottom: 5px; }
+.conj-row[data-idx="0"] { border-left: 3px solid var(--accent-1); }
+.conj-row[data-idx="1"] { border-left: 3px solid var(--accent-2); }
+.conj-row[data-idx="2"] { border-left: 3px solid var(--accent-3); }
+.conj-row[data-idx="3"] { border-left: 3px solid var(--accent-4); }
+.conj-row[data-idx="4"] { border-left: 3px solid var(--accent-5); }
+.conj-row[data-idx="5"] { border-left: 3px solid var(--accent-1); }
+.conj-row[data-idx="6"] { border-left: 3px solid var(--accent-2); }
+.conj-num { width: 24px; height: 24px; border-radius: 50%; background: var(--white); color: var(--carbon); display: flex; align-items: center; justify-content: center; font-size: 11px; font-weight: 600; flex-shrink: 0; }
+.conj-funnel-name { flex: 1; font-size: 11px; color: var(--graphite); font-weight: 500; }
+.funnel-badge { font-size: 9px; color: var(--text-soft); background: var(--white); padding: 2px 7px; border-radius: 8px; }
+
+.stepper-mini { display: flex; align-items: center; gap: 4px; background: var(--white); padding: 3px; border-radius: 6px; border: 0.5px solid var(--border); }
+.mini-btn { width: 24px; height: 24px; border: none; background: transparent; color: var(--graphite); border-radius: 4px; font-size: 13px; font-weight: 600; cursor: pointer; font-family: inherit; transition: all 0.15s; }
+.mini-btn:hover { background: var(--cream); }
+.mini-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+.mini-val { width: 30px; text-align: center; font-size: 12.5px; font-weight: 600; color: var(--graphite); }
+
+.stats-row { display: flex; gap: 8px; margin-bottom: 12px; }
+.stat-card { flex: 1; background: var(--white); border: 0.5px solid var(--border-light); border-radius: 8px; padding: 10px; text-align: center; }
+.stat-num { font-size: 22px; font-weight: 700; color: var(--graphite); line-height: 1; }
+.stat-label { font-size: 9px; color: var(--text-soft); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 3px; font-weight: 600; }
+
+.funnel-preview { background: rgba(143,166,142,0.08); border: 0.5px solid rgba(143,166,142,0.3); border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; }
+.funnel-preview-title { font-size: 10px; color: #5a7558; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 6px; }
+.funnel-items { display: flex; gap: 6px; flex-wrap: wrap; }
+.funnel-item { background: var(--white); padding: 4px 9px; border-radius: 10px; font-size: 10px; border: 0.5px solid var(--border-light); color: var(--carbon); }
+.funnel-item strong { color: var(--graphite); }
+
+.btn-auto-create { width: 100%; padding: 12px; background: var(--graphite); color: var(--white); border: none; border-radius: 8px; font-size: 12px; font-weight: 600; cursor: pointer; letter-spacing: 1px; text-transform: uppercase; font-family: inherit; margin-bottom: 6px; transition: all 0.2s; }
+.btn-auto-create:hover { background: var(--carbon); }
+.btn-manual { width: 100%; padding: 10px; background: transparent; color: var(--text-soft); border: 0.5px solid var(--border); border-radius: 8px; font-size: 10.5px; font-weight: 500; cursor: pointer; letter-spacing: 0.8px; text-transform: uppercase; font-family: inherit; }
+.btn-manual:hover { color: var(--graphite); border-color: var(--carbon); }
+
+/* Campaign/conjunto existente */
 .campaign-card { background: var(--cream); border: 0.5px solid var(--border-light); border-radius: 12px; padding: 16px; margin-bottom: 12px; }
 .campaign-header { display: flex; justify-content: space-between; align-items: center; padding-bottom: 10px; margin-bottom: 12px; border-bottom: 0.5px solid var(--border-light); }
 .campaign-title { font-size: 13px; font-weight: 500; color: var(--graphite); }
@@ -80,35 +205,166 @@ body { font-family: var(--font); background: var(--cream); color: var(--graphite
 .conjunto-card[data-idx="7"] { border-left-color: var(--accent-3); }
 .conjunto-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 0.5px solid var(--border-light); }
 .conjunto-badge { display: inline-flex; align-items: center; gap: 6px; padding: 4px 10px; border-radius: 14px; font-size: 10px; font-weight: 600; letter-spacing: 1px; text-transform: uppercase; }
-.conjunto-badge[data-idx="0"] { background: rgba(200, 164, 126, 0.14); color: #8b6a48; }
-.conjunto-badge[data-idx="1"] { background: rgba(143, 166, 142, 0.14); color: #5a7558; }
-.conjunto-badge[data-idx="2"] { background: rgba(165, 155, 181, 0.14); color: #6b6080; }
-.conjunto-badge[data-idx="3"] { background: rgba(184, 155, 136, 0.14); color: #7f6450; }
-.conjunto-badge[data-idx="4"] { background: rgba(143, 160, 181, 0.14); color: #5a6d85; }
-.conjunto-badge[data-idx="5"] { background: rgba(200, 164, 126, 0.14); color: #8b6a48; }
-.conjunto-badge[data-idx="6"] { background: rgba(143, 166, 142, 0.14); color: #5a7558; }
-.conjunto-badge[data-idx="7"] { background: rgba(165, 155, 181, 0.14); color: #6b6080; }
-.conjunto-title { font-size: 12px; font-weight: 500; color: var(--graphite); letter-spacing: 0.5px; }
+.conjunto-badge[data-idx="0"] { background: rgba(200,164,126,0.14); color: #8b6a48; }
+.conjunto-badge[data-idx="1"] { background: rgba(143,166,142,0.14); color: #5a7558; }
+.conjunto-badge[data-idx="2"] { background: rgba(165,155,181,0.14); color: #6b6080; }
+.conjunto-badge[data-idx="3"] { background: rgba(184,155,136,0.14); color: #7f6450; }
+.conjunto-badge[data-idx="4"] { background: rgba(143,160,181,0.14); color: #5a6d85; }
+.conjunto-badge[data-idx="5"] { background: rgba(200,164,126,0.14); color: #8b6a48; }
+.conjunto-badge[data-idx="6"] { background: rgba(143,166,142,0.14); color: #5a7558; }
+.conjunto-badge[data-idx="7"] { background: rgba(165,155,181,0.14); color: #6b6080; }
+
 .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 8px; }
 .row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; margin-bottom: 8px; }
-.mini-label { font-size: 9px; color: var(--text-soft); margin-bottom: 3px; letter-spacing: 0.8px; font-weight: 500; text-transform: uppercase; }
+.mini-label { font-size: 9px; color: var(--text-soft); margin-bottom: 3px; letter-spacing: 0.8px; font-weight: 600; text-transform: uppercase; }
 .mini-input, .mini-select { width: 100%; padding: 7px 10px; background: var(--cream); border: 0.5px solid var(--border); border-radius: 6px; font-size: 11px; color: var(--graphite); font-family: inherit; outline: none; transition: all 0.2s; }
 .mini-input:focus, .mini-select:focus { background: var(--white); border-color: var(--carbon); }
-.pieza-card { background: var(--cream); border: 0.5px solid var(--border-light); border-radius: 8px; padding: 12px; margin-bottom: 8px; transition: all 0.2s; }
+
+/* PIEZA DIDÁCTICA · Paso 9 mejorado */
+.pieza-card { background: var(--cream); border: 0.5px solid var(--border-light); border-radius: 10px; padding: 14px; margin-bottom: 10px; transition: all 0.2s; }
 .pieza-card.reserva { border-style: dashed; border-color: var(--silver); }
 .pieza-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-.pieza-title { font-size: 11px; font-weight: 500; color: var(--graphite); letter-spacing: 0.3px; }
+.pieza-title { font-size: 12px; font-weight: 600; color: var(--graphite); letter-spacing: 0.3px; display: flex; align-items: center; gap: 8px; }
 .pieza-badge { font-size: 8px; padding: 2px 7px; border-radius: 8px; letter-spacing: 1px; font-weight: 600; text-transform: uppercase; }
 .pieza-badge.activa { background: var(--graphite); color: var(--white); }
 .pieza-badge.reserva { background: var(--silver); color: var(--white); }
+
+.pieza-subtabs { display: flex; gap: 4px; margin-bottom: 12px; padding-bottom: 10px; border-bottom: 0.5px solid var(--border-light); overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.pieza-subtab { flex-shrink: 0; padding: 5px 9px; border-radius: 12px; font-size: 10px; color: var(--text-soft); cursor: pointer; white-space: nowrap; border: 0.5px solid transparent; user-select: none; transition: all 0.15s; }
+.pieza-subtab.done { color: var(--success); }
+.pieza-subtab.active { background: var(--graphite); color: var(--white); font-weight: 600; border-color: var(--graphite); }
+
+.pieza-pill-strip { display: flex; gap: 5px; flex-wrap: wrap; margin-bottom: 10px; padding: 8px 10px; background: var(--white); border-radius: 8px; }
+.pieza-pill { padding: 3px 8px; background: var(--cream); border: 0.5px solid var(--border-light); border-radius: 10px; color: var(--carbon); font-size: 10px; }
+.pieza-pill strong { color: var(--graphite); font-weight: 600; }
+.pieza-pill.empty { color: var(--silver); font-style: italic; }
+
+.pieza-step-content { background: var(--white); border-radius: 10px; padding: 12px; border: 0.5px solid var(--border-light); }
+.pieza-step-header { display: flex; gap: 10px; margin-bottom: 12px; align-items: center; }
+.pieza-step-num { width: 30px; height: 30px; border-radius: 50%; background: var(--graphite); color: var(--white); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; flex-shrink: 0; }
+.pieza-step-info { flex: 1; }
+.pieza-step-q { font-size: 13px; font-weight: 600; color: var(--graphite); margin-bottom: 2px; }
+.pieza-step-sub { font-size: 10px; color: var(--text-soft); line-height: 1.3; }
+
+.cards-grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; }
+.cards-grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; }
+.option-card { padding: 10px; background: var(--cream); border: 0.5px solid var(--border-light); border-radius: 8px; cursor: pointer; transition: all 0.2s; text-align: left; }
+.option-card:hover { border-color: var(--carbon); }
+.option-card.selected { background: var(--white); border: 1.5px solid var(--graphite); }
+
+/* v3.3 · Cards compactas (sub-pasos de pieza y paso 3 estrategia) */
+.option-card-compact { display: flex; align-items: center; gap: 8px; padding: 6px 10px; background: var(--cream); border: 0.5px solid var(--border-light); border-radius: 7px; cursor: pointer; transition: all 0.15s; text-align: left; min-height: 38px; }
+.option-card-compact:hover { border-color: var(--carbon); }
+.option-card-compact.selected { background: var(--white); border: 1.5px solid var(--graphite); }
+.option-card-compact .opt-icon { font-size: 15px; flex-shrink: 0; line-height: 1; }
+.option-card-compact .opt-body { flex: 1; min-width: 0; }
+.option-card-compact .opt-title { font-size: 11px; font-weight: 600; color: var(--graphite); line-height: 1.15; }
+.option-card-compact .opt-desc { font-size: 9.5px; color: var(--text-soft); line-height: 1.2; margin-top: 1px; }
+.cards-row-tight { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 10px; }
+.cards-row-tight > .option-card-compact { flex: 1 1 0; min-width: 130px; }
+.chips-tight { display: flex; flex-wrap: wrap; gap: 5px; margin-top: 4px; }
+.chip-tight { padding: 4px 9px; background: var(--cream); border: 0.5px solid var(--border-light); border-radius: 10px; font-size: 10.5px; cursor: pointer; color: var(--graphite); user-select: none; transition: all 0.15s; }
+.chip-tight:hover { border-color: var(--carbon); }
+.chip-tight.active { background: var(--graphite); color: var(--white); border-color: var(--graphite); font-weight: 600; }
+
+/* Smart mode conjunto card */
+.smart-conj-card { background: var(--white); border: 0.5px solid var(--border-light); border-radius: 10px; padding: 10px 12px; margin-bottom: 8px; }
+.smart-conj-head { display: flex; align-items: center; gap: 8px; margin-bottom: 8px; padding-bottom: 8px; border-bottom: 0.5px dashed var(--border-light); }
+.smart-conj-grid { display: grid; grid-template-columns: 1fr; gap: 8px; }
+@media (min-width: 640px) { .smart-conj-grid { grid-template-columns: auto 1fr 1fr; align-items: end; } }
+.option-icon { font-size: 18px; margin-bottom: 4px; }
+.option-title { font-size: 11px; font-weight: 600; color: var(--graphite); margin-bottom: 2px; }
+.option-desc { font-size: 9.5px; color: var(--text-soft); line-height: 1.3; }
+.option-tag { font-size: 8.5px; color: var(--accent-1); font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; margin-top: 4px; }
+
+.pieza-nav { display: flex; gap: 8px; margin-top: 12px; padding-top: 10px; border-top: 0.5px solid var(--border-light); }
+.pieza-nav-btn { flex: 1; padding: 8px 12px; border-radius: 6px; font-size: 10px; font-weight: 600; letter-spacing: 0.8px; text-transform: uppercase; cursor: pointer; border: 0.5px solid; font-family: inherit; transition: all 0.15s; }
+.pieza-nav-sec { background: transparent; border-color: var(--border); color: var(--text-soft); }
+.pieza-nav-sec:hover { color: var(--graphite); border-color: var(--carbon); }
+.pieza-nav-sec:disabled { opacity: 0.4; cursor: not-allowed; }
+.pieza-nav-pri { background: var(--graphite); border-color: var(--graphite); color: var(--white); }
+.pieza-nav-pri:hover { background: var(--carbon); }
+
+/* Buttons generales */
 .btn-add-dashed { width: 100%; padding: 10px; background: transparent; border: 1px dashed var(--border); border-radius: 8px; color: var(--text-soft); font-size: 11px; font-family: inherit; cursor: pointer; letter-spacing: 0.5px; font-weight: 500; transition: all 0.2s; margin-top: 6px; }
 .btn-add-dashed:hover { border-color: var(--carbon); color: var(--carbon); background: var(--cream); }
 .btn-add-dashed.primary { border-width: 1.5px; color: var(--carbon); font-weight: 500; padding: 12px; }
+/* v3.4 · Acciones post-creación */
+.post-actions { display: grid; gap: 8px; margin-top: 12px; padding-top: 12px; border-top: 0.5px solid var(--border-light); }
+.btn-post-reset { width: 100%; padding: 10px; background: var(--cream); border: 0.5px solid var(--border); border-radius: 8px; color: var(--danger); font-size: 11px; font-family: inherit; cursor: pointer; font-weight: 500; transition: all 0.15s; letter-spacing: 0.3px; }
+.btn-post-reset:hover { background: #fdf2f2; border-color: var(--danger); }
+.btn-post-cambiar { width: 100%; padding: 10px; background: var(--white); border: 0.5px solid var(--border); border-radius: 8px; color: var(--carbon); font-size: 11px; font-family: inherit; cursor: pointer; font-weight: 500; transition: all 0.15s; letter-spacing: 0.3px; }
+.btn-post-cambiar:hover { background: var(--cream); border-color: var(--carbon); }
+.modo-actual-pill { font-size: 10.5px; color: var(--text-soft); padding: 3px 9px; background: var(--cream); border: 0.5px solid var(--border-light); border-radius: 10px; }
+.modo-actual-pill strong { color: var(--graphite); font-weight: 600; }
+/* v3.7 · Top actions (botones arriba) */
+.top-actions { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin: 10px 0 16px; }
+.btn-top-action { padding: 9px 12px; background: var(--white); border: 0.5px solid var(--border); border-radius: 7px; color: var(--graphite); font-size: 11px; font-family: inherit; cursor: pointer; font-weight: 500; transition: all 0.15s; }
+.btn-top-action:hover { background: var(--cream); border-color: var(--carbon); }
+.btn-top-action.btn-top-danger { color: var(--danger); }
+.btn-top-action.btn-top-danger:hover { background: #fdf2f2; border-color: var(--danger); }
+@media (max-width: 500px) { .top-actions { grid-template-columns: 1fr; } }
+/* v3.7 · Modal confirmación propio */
+.confirm-modal-backdrop { position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 9999; display: flex; align-items: center; justify-content: center; padding: 20px; }
+.confirm-modal { background: var(--white); border-radius: 14px; padding: 22px; max-width: 380px; width: 100%; box-shadow: 0 10px 40px rgba(0,0,0,0.15); }
+.confirm-modal-msg { font-size: 13px; line-height: 1.5; color: var(--graphite); margin-bottom: 18px; white-space: pre-line; }
+.confirm-modal-actions { display: flex; gap: 8px; justify-content: flex-end; }
+.confirm-modal-btn { padding: 9px 16px; border-radius: 7px; font-size: 12px; font-family: inherit; cursor: pointer; font-weight: 500; border: 0.5px solid var(--border); transition: all 0.15s; }
+.confirm-modal-cancel { background: var(--white); color: var(--text-soft); }
+.confirm-modal-cancel:hover { background: var(--cream); color: var(--graphite); }
+.confirm-modal-ok { background: var(--graphite); color: var(--white); border-color: var(--graphite); }
+.confirm-modal-ok:hover { background: var(--carbon); }
+/* v3.5 · Event chips (eventos estacionales) */
+.event-chips { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.event-chip { display: inline-flex; align-items: center; gap: 6px; padding: 7px 11px; background: var(--cream); border: 0.5px solid var(--border-light); border-radius: 8px; cursor: pointer; transition: all 0.15s; user-select: none; }
+.event-chip:hover { border-color: var(--carbon); }
+.event-chip.active { background: var(--white); border: 1.5px solid var(--graphite); }
+.event-chip-mes { font-size: 9px; letter-spacing: 1px; text-transform: uppercase; color: var(--text-soft); font-weight: 600; padding: 2px 5px; background: var(--white); border-radius: 4px; border: 0.5px solid var(--border-light); }
+.event-chip.active .event-chip-mes { background: var(--graphite); color: var(--white); border-color: var(--graphite); }
+.event-chip-name { font-size: 11px; font-weight: 500; color: var(--graphite); }
+.event-chip-custom { border-style: dashed; }
+/* v3.5 · Oferta details (paso 3 expandible) */
+.oferta-details { margin-top: 20px; padding-top: 18px; border-top: 0.5px solid var(--border-light); }
+.oferta-details-title { font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--carbon); font-weight: 700; display: flex; align-items: center; gap: 6px; margin-bottom: 3px; }
+.oferta-details-icon { color: var(--warning); }
+.oferta-details-sub { font-size: 10.5px; color: var(--text-soft); font-style: italic; margin-bottom: 14px; }
+/* v3.5 · Idea chips (ejemplos clickeables) */
+.idea-chips { display: flex; flex-wrap: wrap; gap: 5px; margin: 6px 0 8px; align-items: center; }
+.idea-chips-label { font-size: 9.5px; color: var(--text-soft); font-weight: 500; letter-spacing: 0.3px; margin-right: 2px; }
+.idea-chip { padding: 5px 10px; background: var(--cream); border: 0.5px solid var(--border-light); border-radius: 12px; font-size: 10.5px; font-family: inherit; color: var(--graphite); cursor: pointer; transition: all 0.15s; }
+.idea-chip:hover { background: var(--white); border-color: var(--carbon); }
+/* v3.5 · Descripción del modelo */
+.modelo-desc-wrap { margin-top: 10px; padding-top: 10px; border-top: 0.5px dashed var(--border-light); }
+.modelo-desc-label { font-size: 10px; letter-spacing: 0.8px; text-transform: uppercase; color: var(--carbon); font-weight: 600; margin-bottom: 6px; }
+.modelo-desc-textarea { width: 100%; min-height: 60px; padding: 8px 10px; background: var(--cream); border: 0.5px solid var(--border-light); border-radius: 6px; font-size: 11px; line-height: 1.5; color: var(--graphite); font-family: inherit; resize: vertical; outline: none; }
+.modelo-desc-textarea:focus { border-color: var(--carbon); background: var(--white); }
+/* v3.6 · Botón cambiar oferta */
+.btn-cambiar-oferta { width: 100%; padding: 9px; background: var(--cream); border: 0.5px dashed var(--border); border-radius: 7px; color: var(--text-soft); font-size: 11px; font-family: inherit; cursor: pointer; margin-top: 4px; transition: all 0.15s; }
+.btn-cambiar-oferta:hover { border-color: var(--carbon); color: var(--carbon); background: var(--white); }
+/* v3.6 · Objetivos didácticos */
+.objetivos-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; margin-top: 6px; }
+@media (max-width: 600px) { .objetivos-grid { grid-template-columns: repeat(2, 1fr); } }
+.objetivo-chip { padding: 8px 9px; background: var(--cream); border: 0.5px solid var(--border-light); border-radius: 8px; cursor: pointer; transition: all 0.15s; text-align: center; }
+.objetivo-chip:hover { border-color: var(--carbon); }
+.objetivo-chip.active { background: var(--graphite); border-color: var(--graphite); }
+.objetivo-chip.active .objetivo-chip-name { color: var(--white); }
+.objetivo-chip.active .objetivo-chip-desc { color: rgba(255,255,255,0.7); }
+.objetivo-chip-name { font-size: 11px; font-weight: 500; color: var(--graphite); line-height: 1.2; }
+.objetivo-chip-desc { font-size: 9.5px; color: var(--text-soft); margin-top: 2px; line-height: 1.2; }
+/* v3.3 · Fila de botones pieza (activa + reserva lado a lado) */
+.pieza-add-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-top: 6px; }
+.pieza-add-row .btn-add-dashed { margin-top: 0; }
+.btn-add-dashed.btn-reserva { border-style: dashed; opacity: 0.85; }
+.btn-add-dashed.btn-reserva:hover { opacity: 1; }
 .btn-duplicate { width: 100%; padding: 9px; background: var(--white); border: 0.5px solid var(--graphite); border-radius: 8px; color: var(--graphite); font-size: 11px; font-family: inherit; cursor: pointer; letter-spacing: 0.5px; font-weight: 500; transition: all 0.2s; margin-top: 6px; }
 .btn-duplicate:hover { background: var(--graphite); color: var(--white); }
+
+/* Team */
 .team-row { display: grid; grid-template-columns: 110px 1fr 24px; gap: 6px; margin-bottom: 5px; align-items: center; }
 .team-row input { padding: 7px 9px; border: 0.5px solid var(--border); border-radius: 5px; font-size: 11px; font-family: inherit; color: var(--graphite); outline: none; transition: all 0.15s; background: var(--white); }
 .team-row input:focus { border-color: var(--carbon); }
+
+/* Footer */
 .footer { padding: 18px 32px; background: var(--cream); border-top: 0.5px solid var(--border-light); display: flex; justify-content: space-between; align-items: center; }
 .counter { font-size: 11px; color: var(--silver); letter-spacing: 0.5px; }
 .btn-group { display: flex; gap: 8px; }
@@ -118,52 +374,75 @@ body { font-family: var(--font); background: var(--cream); color: var(--graphite
 .btn-secondary:disabled { opacity: 0.35; cursor: not-allowed; }
 .btn-primary { background: var(--graphite); color: var(--white); }
 .btn-primary:hover { background: var(--carbon); }
+
+/* Toggle */
 .toggle-group { display: flex; gap: 6px; margin-bottom: 12px; }
 .toggle-btn { flex: 1; padding: 10px; background: var(--white); border: 0.5px solid var(--border); border-radius: 8px; font-size: 12px; color: var(--text-soft); cursor: pointer; font-family: inherit; transition: all 0.2s; }
 .toggle-btn.active { background: var(--cream); border: 1.5px solid var(--graphite); color: var(--graphite); font-weight: 500; }
 .checkbox-wrap { display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--text-soft); margin: 10px 0; }
 .checkbox-wrap input { margin: 0; cursor: pointer; }
-.prompt-output { background: var(--graphite); color: #E8E5E2; border-radius: 12px; padding: 20px; font-family: 'Menlo', 'Consolas', monospace; font-size: 11px; line-height: 1.7; max-height: 500px; overflow-y: auto; white-space: pre-wrap; word-wrap: break-word; margin: 16px 0; }
+
+/* Alerts */
+.budget-warning { background: rgba(176,90,90,0.08); border: 0.5px solid var(--danger); color: var(--danger); padding: 10px 14px; border-radius: 8px; font-size: 12px; font-weight: 500; margin-top: 8px; }
+.budget-ok { background: rgba(107,142,107,0.08); border: 0.5px solid var(--success); color: var(--success); padding: 10px 14px; border-radius: 8px; font-size: 12px; font-weight: 500; margin-top: 8px; }
+
+/* Prompt output */
+.prompt-output { background: var(--graphite); color: #E8E5E2; border-radius: 12px; padding: 20px; font-family: 'Menlo','Consolas',monospace; font-size: 11px; line-height: 1.7; max-height: 500px; overflow-y: auto; white-space: pre-wrap; word-wrap: break-word; margin: 16px 0; }
 .prompt-output::-webkit-scrollbar { width: 8px; }
 .prompt-output::-webkit-scrollbar-track { background: transparent; }
 .prompt-output::-webkit-scrollbar-thumb { background: var(--carbon); border-radius: 4px; }
 .action-buttons { display: flex; gap: 8px; flex-wrap: wrap; margin-top: 12px; }
 .action-buttons .btn { flex: 1; min-width: 120px; }
+
 .custom-input-inline { margin-top: 6px; padding: 6px 10px; background: var(--white); border: 0.5px solid var(--carbon); border-radius: 6px; font-size: 11px; font-family: inherit; color: var(--graphite); width: 100%; outline: none; }
+
+/* Copy success toast */
 .copy-success { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%) translateY(100px); background: var(--graphite); color: var(--white); padding: 12px 24px; border-radius: 24px; font-size: 12px; font-weight: 500; letter-spacing: 0.5px; box-shadow: 0 8px 24px rgba(0,0,0,0.2); transition: transform 0.3s ease; z-index: 1000; }
 .copy-success.visible { transform: translateX(-50%) translateY(0); }
+
+/* Auto-save indicator */
+.autosave-indicator { position: fixed; top: 14px; right: 14px; background: rgba(107,142,107,0.12); border: 0.5px solid rgba(107,142,107,0.3); color: var(--success); padding: 6px 12px; border-radius: 14px; font-size: 10px; font-weight: 600; letter-spacing: 0.5px; opacity: 0; transition: opacity 0.3s; z-index: 999; }
+.autosave-indicator.visible { opacity: 1; }
+
+/* Help modal */
+.modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(51,51,51,0.6); display: none; justify-content: center; align-items: center; z-index: 2000; padding: 20px; }
+.modal-overlay.active { display: flex; }
+.modal { background: var(--white); border-radius: 14px; max-width: 500px; width: 100%; max-height: 85vh; overflow-y: auto; padding: 24px; }
+.modal-title { font-size: 18px; font-weight: 600; color: var(--graphite); margin: 0 0 6px; }
+.modal-sub { font-size: 12px; color: var(--text-soft); margin-bottom: 18px; }
+.modal-close { float: right; background: none; border: none; font-size: 24px; color: var(--text-soft); cursor: pointer; line-height: 1; padding: 0; }
+.modal-section { margin-bottom: 16px; }
+.modal-h { font-size: 11px; font-weight: 600; color: var(--accent-1); letter-spacing: 1.2px; text-transform: uppercase; margin-bottom: 6px; }
+.modal-p { font-size: 12.5px; color: var(--carbon); line-height: 1.5; margin-bottom: 8px; }
+
 .signature { text-align: center; padding: 16px 32px; border-top: 0.5px solid var(--border-light); font-size: 10px; color: var(--silver); letter-spacing: 1px; }
-.modelo-precio-card { background: var(--cream); border: 0.5px solid var(--border-light); border-radius: 10px; padding: 12px 14px; margin-bottom: 8px; transition: all 0.2s; }
-.modelo-precio-card.selected { background: var(--white); border: 1px solid var(--graphite); }
-.modelo-precio-row { display: flex; align-items: center; gap: 12px; }
-.modelo-checkbox { width: 18px; height: 18px; border-radius: 4px; border: 1px solid var(--border); background: var(--white); display: flex; align-items: center; justify-content: center; flex-shrink: 0; cursor: pointer; font-size: 11px; color: var(--white); transition: all 0.2s; }
-.modelo-checkbox.checked { background: var(--graphite); border-color: var(--graphite); }
-.modelo-name { flex: 1; font-size: 13px; font-weight: 500; color: var(--graphite); }
-.modelo-name.unselected { color: var(--text-soft); }
-.price-inputs { display: flex; gap: 6px; align-items: center; }
-.price-input { width: 90px; padding: 6px 10px; border: 0.5px solid var(--border); border-radius: 6px; font-size: 11px; font-family: inherit; color: var(--graphite); text-align: right; outline: none; background: var(--white); }
-.price-input:focus { border-color: var(--carbon); }
-.price-input::placeholder { color: var(--silver); }
-.price-label-inline { font-size: 9px; color: var(--text-soft); letter-spacing: 0.5px; }
-.budget-warning { background: rgba(176, 90, 90, 0.08); border: 0.5px solid var(--danger); color: var(--danger); padding: 10px 14px; border-radius: 8px; font-size: 12px; font-weight: 500; margin-top: 8px; }
-.budget-ok { background: rgba(107, 142, 107, 0.08); border: 0.5px solid var(--success); color: var(--success); padding: 10px 14px; border-radius: 8px; font-size: 12px; font-weight: 500; margin-top: 8px; }
+
 @media (max-width: 640px) {
   .app { border: none; }
   .header { padding: 22px 20px 18px; }
   .header img { height: 40px; }
-  .body { padding: 22px 20px; }
+  .body { padding: 16px 20px 22px; }
   .footer { padding: 16px 20px; flex-direction: column; gap: 12px; }
   .footer .btn-group { width: 100%; }
   .footer .btn { flex: 1; }
-  .radio-grid { grid-template-columns: 1fr; }
+  .radio-grid, .cards-grid-2 { grid-template-columns: 1fr; }
+  .cards-grid-3 { grid-template-columns: 1fr 1fr; }
   .row-2, .row-3 { grid-template-columns: 1fr; }
+  .mode-toggle { grid-template-columns: 1fr; }
   .team-row { grid-template-columns: 100px 1fr 24px; }
   .price-inputs { flex-direction: column; align-items: stretch; gap: 4px; }
   .price-input { width: 100%; text-align: left; }
+  .stats-row { flex-wrap: wrap; }
+  .stat-card { min-width: 30%; }
+  .hero { padding: 14px; gap: 10px; }
+  .hero-emoji { font-size: 28px; }
+  .hero-title { font-size: 15px; }
 }
 </style>
 </head>
 <body>
+<div class="autosave-indicator" id="autosaveIndicator">✓ Guardado</div>
+
 <div class="app">
   <div class="header">
     <img src="logo.png" alt="Serrano Group">
@@ -178,20 +457,30 @@ body { font-family: var(--font); background: var(--cream); color: var(--graphite
       <button class="btn btn-primary" id="btnNext" onclick="goNext()">Continuar →</button>
     </div>
   </div>
-  <div class="signature">SERRANO GROUP · Campaign Builder v3.1</div>
+  <div class="signature">SERRANO GROUP · Campaign Builder v3.2</div>
 </div>
+
+<!-- Modal ayuda -->
+<div class="modal-overlay" id="helpModal" onclick="cerrarModalBg(event)">
+  <div class="modal">
+    <button class="modal-close" onclick="cerrarModal()">×</button>
+    <h3 class="modal-title" id="modalTitle">Ayuda</h3>
+    <p class="modal-sub" id="modalSub">Guía de este paso</p>
+    <div id="modalBody"></div>
+  </div>
+</div>
+
 <div class="copy-success" id="copySuccess">Copiado al portapapeles</div>
 
 <script>
 // ============================================
-// DATA · CORRECCIONES APLICADAS
+// DATA + CONSTANTS
 // ============================================
 const MODELOS_BASE = [
-  "NB 530", "NB 9060", "Nike V2K", "On Cloud",
-  "Adidas Adizero", "Adidas Ultraboost", "Adidas Samba",
-  "Nike Free Metcon", "Nike Zoom", "Asics"
+  "NB 530","NB 9060","Nike V2K","On Cloud",
+  "Adidas Adizero","Adidas Ultraboost","Adidas Samba",
+  "Nike Free Metcon","Nike Zoom","Asics"
 ];
-
 const EVENTOS_ESTACIONALES = [
   { mes: "Enero", nombre: "Reset del año" },
   { mes: "Febrero", nombre: "San Valentín" },
@@ -205,46 +494,52 @@ const EVENTOS_ESTACIONALES = [
   { mes: "Noviembre", nombre: "Black Friday" },
   { mes: "Diciembre", nombre: "Primatón fin de año" }
 ];
-
-const ANGULOS_BASE = [
-  "Problema / Dolor",
-  "Beneficios",
-  "Prueba social",
-  "Aspiracional / Funcional",
-  "Confianza"
-];
-
-const NARRATIVAS_BASE = [
-  "Testimonio", "Problema-Solución", "Unboxing", "Antes-Después",
-  "Oferta directa", "Tutorial / Cómo usar", "Founder story", "Reviews", "Modo de uso"
-];
-
-// #4: "Video in-house" → "Videos por nosotros"
-const TIPOS_PIEZA = ["Video UGC", "Videos por nosotros", "Imagen estática", "Carrusel"];
-
-// #8: Formatos de imagen/video
-const FORMATOS = ["9:16", "1:1", "4:5"];
-
+const ANGULOS_BASE = ["Problema / Dolor","Beneficios","Prueba social","Aspiracional / Funcional","Confianza"];
+const NARRATIVAS_BASE = ["Testimonio","Problema-Solución","Unboxing","Antes-Después","Oferta directa","Tutorial / Cómo usar","Founder story","Reviews","Modo de uso"];
+const TIPOS_PIEZA = ["Video UGC","Videos por nosotros","Imagen estática","Carrusel"];
+const FORMATOS = ["9:16","1:1","4:5"];
 const ESTRUCTURAS_COPY = [
-  { nombre: "PAS", label: "PAS · Problema-Agitación-Solución" },
-  { nombre: "AIDA", label: "AIDA · Atención-Interés-Deseo-Acción" },
-  { nombre: "FAB", label: "FAB · Características-Ventajas-Beneficios" },
-  { nombre: "BAB", label: "BAB · Antes-Después-Puente" },
-  { nombre: "4U", label: "4U · Útil-Urgente-Único-Específico" },
-  { nombre: "Storytelling", label: "Storytelling · Narrativa con historia" }
+  { nombre: "PAS", label: "PAS · Problema-Agitación-Solución", icon: "🎯", desc: "Dolor → agitar → solución" },
+  { nombre: "AIDA", label: "AIDA · Atención-Interés-Deseo-Acción", icon: "🪄", desc: "Captar → enganchar → desear → acción" },
+  { nombre: "FAB", label: "FAB · Características-Ventajas-Beneficios", icon: "⚙️", desc: "Qué tiene → qué permite → qué mejora" },
+  { nombre: "BAB", label: "BAB · Antes-Después-Puente", icon: "🌉", desc: "Situación actual → deseada → puente" },
+  { nombre: "4U", label: "4U · Útil-Urgente-Único-Específico", icon: "⚡", desc: "Cuatro cualidades presentes" },
+  { nombre: "Storytelling", label: "Storytelling", icon: "📖", desc: "Historia con personaje y transformación" }
 ];
-
 const OBJETIVOS_META = [
-  "Reconocimiento", "Tráfico", "Interacción",
-  "Clientes potenciales", "Promoción de la app", "Ventas"
+  { nombre: "Reconocimiento", desc: "Que te vean" },
+  { nombre: "Tráfico", desc: "Clicks al sitio" },
+  { nombre: "Interacción", desc: "Likes, comments" },
+  { nombre: "Clientes potenciales", desc: "Leads / WhatsApp" },
+  { nombre: "Promoción de la app", desc: "Instalar app" },
+  { nombre: "Ventas", desc: "Comprar ahora" }
 ];
+const TIPOS_TRAFICO = [
+  { nombre: "Frío", icon: "❄️", desc: "No conoce la marca" },
+  { nombre: "Tibio", icon: "🌤️", desc: "Ya vio contenido" },
+  { nombre: "Caliente", icon: "🔥", desc: "Cerca de comprar" }
+];
+const NIVELES_CONCIENCIA = [
+  { nombre: "Inconsciente", icon: "🌫️", desc: "No sabe del problema" },
+  { nombre: "Problema", icon: "💭", desc: "Sabe del problema" },
+  { nombre: "Solución", icon: "🔍", desc: "Busca solución" },
+  { nombre: "Producto", icon: "🎯", desc: "Conoce tu producto" },
+  { nombre: "Decisión", icon: "✅", desc: "Decidido a comprar" }
+];
+const MOTIVOS = [
+  { nombre: "Emocional", icon: "❤️", desc: "Apelar al sentir" },
+  { nombre: "Racional", icon: "🧠", desc: "Apelar a la lógica" },
+  { nombre: "Social", icon: "👥", desc: "Apelar al grupo" }
+];
+const PUBLICOS = ["Segmentación abierta","Advantage+","Retargeting","Públicos similares","Intereses"];
 
-const TIPOS_TRAFICO = ["Frío", "Tibio", "Caliente"];
-// #2: "Total" → "Decisión"
-const NIVELES_CONCIENCIA = ["Inconsciente", "Problema", "Solución", "Producto", "Decisión"];
-const MOTIVOS = ["Emocional", "Racional", "Social"];
-// #3: Públicos corregidos
-const PUBLICOS = ["Segmentación abierta", "Advantage+", "Retargeting", "Públicos similares", "Intereses"];
+// FUNNEL MAPPING (deprecated - v3.3 quita TOFU/MOFU/BOFU)
+function getFunnelName(totalConjuntos, idx) {
+  return `Conjunto ${idx + 1}`;
+}
+function getFunnelIcon(funnelName) {
+  return "📂";
+}
 
 // ============================================
 // ESTADO GLOBAL
@@ -252,7 +547,6 @@ const PUBLICOS = ["Segmentación abierta", "Advantage+", "Retargeting", "Públic
 const state = {
   currentStep: 1,
   empresa: "",
-  // Paso 2 · #7: Campos extendidos
   nombreCampana: "",
   contextoCampana: "",
   tipoCampana: "",
@@ -265,36 +559,42 @@ const state = {
   tonoYestilo: "",
   llamadaAccion: "",
   propuestasValor: "",
-  // Paso 3
   tipoOferta: "",
   otraOferta: "",
   contextoOferta: "",
-  // Paso 4 · #12: Modelos con precios
+  ofertaMetodosPago: "",
+  ofertaRegalo: "",
+  ofertaGarantia: "",
+  ofertaCambios: "",
+  ofertaEnvio: "",
   modelosSeleccionados: [],
   modelosCustom: [],
-  preciosModelos: {}, // { "NB 530": { antes: "189900", ahora: "169900" } }
-  // Paso 5
+  preciosModelos: {},
+  modelosDescripcion: {},
   objetivo: "",
-  // #6: ABO/CBO
   tipoPresupuesto: "ABO",
   campanas: [],
   angulosPersonalizados: [],
   narrativasCustom: [],
   tiposPiezaCustom: [],
-  // Paso 6
   presupuestoModo: "mensual",
   presupuestoValor: "",
   fechaInicio: "",
   fechaFin: "",
   sinFechaFin: false,
-  // Paso 7
   equipo: [
     { rol: "CEO", email: "Administrativo@tennispremiumcol.com" },
     { rol: "Dir. creativa", email: "creativo@tennispremiumcol.com" },
     { rol: "Diseñador", email: "diseno@tennispremiumcol.com" },
     { rol: "Trafficker", email: "Trafico@tennispremiumcol.com" },
     { rol: "Community", email: "Community@tennispremiumcol.com" }
-  ]
+  ],
+  // Asistente automático
+  autoMode: "quick", // "quick" | "custom"
+  autoCampanas: 1,
+  autoConjuntos: 3,
+  autoPiezasXConj: 5,
+  autoPiezasCustom: [5, 5, 5]
 };
 
 // ============================================
@@ -308,25 +608,25 @@ function getAllTiposPieza() { return [...TIPOS_PIEZA, ...state.tiposPiezaCustom]
 function newPieza(estado = "activa") {
   return {
     id: "P" + Math.random().toString(36).substr(2, 5).toUpperCase(),
-    estado: estado,
+    estado: estado, subpaso: 1,
     modelo: "", tipoPieza: "", formato: "", carruselSlides: 5,
     angulo: "", trafico: "", conciencia: "", motivo: "",
-    narrativa: "", estructuraCopy: "",
+    narrativa: "", estructuraCopy: "", duracion: "",
     _customs: {}
   };
 }
-function newConjunto(nombre = "") {
+function newConjunto(nombre = "", funnel = "") {
   return {
     id: "C" + Math.random().toString(36).substr(2, 5).toUpperCase(),
-    nombre: nombre, publico: "", publicoCustom: "",
+    nombre: nombre, funnel: funnel,
+    publico: "", publicoCustom: "",
     porcentaje: 33, piezas: []
   };
 }
 function newCampana(nombre = "") {
   return {
     id: "CA" + Math.random().toString(36).substr(2, 5).toUpperCase(),
-    nombre: nombre,
-    conjuntos: [newConjunto()]
+    nombre: nombre, conjuntos: [newConjunto()]
   };
 }
 function formatMoney(num) {
@@ -336,28 +636,162 @@ function formatMoney(num) {
 function parseMoney(str) { return String(str).replace(/[^\d]/g, ""); }
 function escapeHTML(str) {
   if (!str && str !== 0) return "";
-  return String(str).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#039;");
+  return String(str).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;");
 }
-function escapeAttr(str) { return String(str).replace(/'/g, "\\'").replace(/"/g, "&quot;"); }
+function escapeAttr(str) { return String(str).replace(/'/g,"\\'").replace(/"/g,"&quot;"); }
 
-// #1: Dropdown con título como placeholder + opción "+ Otro"
 function selectPlaceholder(title, options, currentValue, onChangeCode, allowCustom = true) {
   const hasCustom = currentValue && !options.includes(currentValue) && currentValue !== "__custom__";
   const selectValue = hasCustom ? "__custom__" : currentValue;
-  let html = `<select class="mini-select" onchange="${onChangeCode}">`;
-  html += `<option value="" ${!selectValue ? "selected" : ""}>${title}</option>`;
+  const isEmpty = !selectValue;
+  let html = `<select class="mini-select${isEmpty ? ' placeholder-empty' : ''}" onchange="${onChangeCode}">`;
+  html += `<option value="" ${!selectValue ? "selected" : ""}>— Elige ${title.toLowerCase()} —</option>`;
   options.forEach(opt => {
     html += `<option value="${escapeAttr(opt)}" ${selectValue === opt ? "selected" : ""}>${escapeHTML(opt)}</option>`;
   });
-  if (allowCustom) {
-    html += `<option value="__custom__" ${selectValue === "__custom__" ? "selected" : ""}>+ Otro...</option>`;
-  }
+  if (allowCustom) html += `<option value="__custom__" ${selectValue === "__custom__" ? "selected" : ""}>+ Otro...</option>`;
   html += `</select>`;
   return html;
 }
 
 // ============================================
-// RENDER
+// AUTO-SAVE (bonus seguridad)
+// ============================================
+let autosaveTimer = null;
+
+// v3.7 · Sistema de modal de confirmación propio (reemplaza confirm() bloqueado en sandbox)
+let _confirmCallback = null;
+function showConfirm(msg, onOk) {
+  _confirmCallback = onOk;
+  const existing = document.getElementById("__confirm_modal");
+  if (existing) existing.remove();
+  const modal = document.createElement("div");
+  modal.id = "__confirm_modal";
+  modal.className = "confirm-modal-backdrop";
+  modal.innerHTML = `
+    <div class="confirm-modal">
+      <div class="confirm-modal-msg">${escapeHTML(msg)}</div>
+      <div class="confirm-modal-actions">
+        <button class="confirm-modal-btn confirm-modal-cancel" onclick="closeConfirm(false)">Cancelar</button>
+        <button class="confirm-modal-btn confirm-modal-ok" onclick="closeConfirm(true)">Confirmar</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(modal);
+}
+function closeConfirm(result) {
+  const modal = document.getElementById("__confirm_modal");
+  if (modal) modal.remove();
+  const cb = _confirmCallback;
+  _confirmCallback = null;
+  if (cb && result) cb();
+}
+
+function autoSave() {
+  if (autosaveTimer) clearTimeout(autosaveTimer);
+  autosaveTimer = setTimeout(() => {
+    try {
+      const data = JSON.stringify(state);
+      // Nota: usamos variable en memoria + sessionStorage donde sea posible
+      window._serranoAutosave = data;
+      const ind = document.getElementById("autosaveIndicator");
+      if (ind) { ind.classList.add("visible"); setTimeout(() => ind.classList.remove("visible"), 1500); }
+    } catch (e) { /* no-op */ }
+  }, 800);
+}
+
+// ============================================
+// MODAL
+// ============================================
+function abrirModal(titulo, subtitulo, contenido) {
+  document.getElementById("modalTitle").textContent = titulo;
+  document.getElementById("modalSub").textContent = subtitulo;
+  document.getElementById("modalBody").innerHTML = contenido;
+  document.getElementById("helpModal").classList.add("active");
+}
+function cerrarModal() { document.getElementById("helpModal").classList.remove("active"); }
+function cerrarModalBg(e) { if (e.target.classList.contains("modal-overlay")) cerrarModal(); }
+
+function getHelpContent(step) {
+  const helps = {
+    1: { title: "Paso 1 · Identificación", sub: "Cómo llenar este paso", body: `
+      <div class="modal-section">
+        <div class="modal-h">¿Qué poner?</div>
+        <div class="modal-p">El nombre de la marca exacto tal como lo verá el cliente. Ej: "Tennispremium", "Altagama Premium".</div>
+      </div>
+      <div class="modal-section">
+        <div class="modal-h">¿Por qué importa?</div>
+        <div class="modal-p">Este nombre aparece en el brief final, el Word de Claude Code y los copys generados.</div>
+      </div>` },
+    2: { title: "Paso 2 · Brief", sub: "La info que nutre los copys", body: `
+      <div class="modal-section">
+        <div class="modal-h">Tip del coach</div>
+        <div class="modal-p">Los campos con ✦ impactan directamente la calidad del copy. Si no tienes tiempo, llena al menos: <strong>Insight</strong>, <strong>Público</strong> y <strong>Qué NO hacer</strong>.</div>
+      </div>
+      <div class="modal-section">
+        <div class="modal-h">Insight · Mensaje clave</div>
+        <div class="modal-p">Es la tensión emocional que hace que compren AHORA. Ejemplo: "Trabajaste todo el semestre, la prima es tuya".</div>
+      </div>
+      <div class="modal-section">
+        <div class="modal-h">Qué NO hacer</div>
+        <div class="modal-p">Las limitaciones salvan el copy. Ej: "NO urgencia falsa, NO comparar con otras marcas, NO clichés como 'la oportunidad de tu vida'".</div>
+      </div>` },
+    3: { title: "Paso 3 · Oferta", sub: "El gancho que hace comprar", body: `
+      <div class="modal-section">
+        <div class="modal-h">Tip Serrano</div>
+        <div class="modal-p">Las ofertas claras convierten más que las complicadas. <strong>"Todo a $195.000"</strong> funciona mejor que "15% OFF con código adicional 2x1".</div>
+      </div>
+      <div class="modal-section">
+        <div class="modal-h">Contexto de la oferta</div>
+        <div class="modal-p">Explica el POR QUÉ del precio. Ej: "Código PRIMATON activo en junio, aprovechando la prima legal en Colombia".</div>
+      </div>` },
+    4: { title: "Paso 4 · Catálogo", sub: "Modelos y precios reales", body: `
+      <div class="modal-section">
+        <div class="modal-h">Importante</div>
+        <div class="modal-p">Marca los modelos que se usarán EN ESTA campaña específica. Si tu tienda tiene 50 modelos, solo marca los 3-5 de esta campaña.</div>
+      </div>
+      <div class="modal-section">
+        <div class="modal-h">Precios antes/ahora</div>
+        <div class="modal-p">El precio "antes" va tachado en los copys. El "ahora" es el precio final con descuento. Claude Code los usa EXACTOS.</div>
+      </div>` },
+    5: { title: "Paso 5 · Estructura Meta", sub: "Cómo armar la estrategia", body: `
+      <div class="modal-section">
+        <div class="modal-h">Modo rápido vs personalizado</div>
+        <div class="modal-p"><strong>Rápido</strong>: todos los conjuntos tienen las mismas piezas. <strong>Personalizado</strong>: tú defines cuántas piezas lleva cada conjunto.</div>
+      </div>
+      <div class="modal-section">
+        <div class="modal-h">Rápido vs Personalizado</div>
+        <div class="modal-p"><strong>Rápido</strong>: todos los conjuntos tienen el mismo nº de piezas. <strong>Personalizado</strong>: tú defines cuántas piezas lleva cada conjunto. Después llenas cada pieza manualmente (modelo, tipo, ángulo, copy, etc).</div>
+      </div>
+      <div class="modal-section">
+        <div class="modal-h">ABO vs CBO</div>
+        <div class="modal-p"><strong>ABO</strong>: tú controlas el % por conjunto. <strong>CBO</strong>: Meta distribuye según rendimiento.</div>
+      </div>` },
+    6: { title: "Paso 6 · Presupuesto", sub: "Inversión y fechas", body: `
+      <div class="modal-section">
+        <div class="modal-h">Diario vs mensual</div>
+        <div class="modal-p">Si prefieres pensar en total mensual, escríbelo mensual. Si piensas día a día, escríbelo diario. El dashboard calcula el otro en automático.</div>
+      </div>
+      <div class="modal-section">
+        <div class="modal-h">Fechas</div>
+        <div class="modal-p">Para campañas <strong>evergreen</strong>, marca "sin fecha fin". Para estacionales, define inicio y fin específicos.</div>
+      </div>` },
+    7: { title: "Paso 7 · Equipo", sub: "Responsables de la campaña", body: `
+      <div class="modal-section">
+        <div class="modal-h">Equipo por defecto</div>
+        <div class="modal-p">Los emails del equipo Tennispremium ya están precargados. Puedes editar, agregar o quitar personas según la campaña.</div>
+      </div>` }
+  };
+  return helps[step] || { title: "Ayuda", sub: "Guía", body: "<div class='modal-p'>Guía del paso actual.</div>" };
+}
+function mostrarAyuda() {
+  const step = state.currentStep;
+  const h = getHelpContent(step);
+  abrirModal(h.title, h.sub, h.body);
+}
+
+// ============================================
+// RENDER PRINCIPAL
 // ============================================
 function render() {
   const step = state.currentStep;
@@ -366,7 +800,7 @@ function render() {
   document.getElementById("btnNext").textContent = step === 7 ? "Generar prompt →" : "Continuar →";
 
   const body = document.getElementById("body");
-  let html = renderDots(step);
+  let html = renderTopBar(step) + renderProgress(step);
   if (step === 1) html += renderStep1();
   else if (step === 2) html += renderStep2();
   else if (step === 3) html += renderStep3();
@@ -384,17 +818,38 @@ function render() {
     document.getElementById("btnNext").style.display = "";
     document.getElementById("btnBack").textContent = "← Atrás";
   }
+  autoSave();
 }
 
-function renderDots(step) {
-  let dots = '<div class="dots">';
+function renderTopBar(step) {
+  const mensajesMotivadores = {
+    1: "Empezamos 💪",
+    2: "Ya vamos bien",
+    3: "Definiendo el gancho",
+    4: "Catálogo al aire",
+    5: "Armando la estructura",
+    6: "Casi listos",
+    7: "Último paso ✨",
+    8: "¡Listo! 🎉"
+  };
+  return `
+    <div class="top-bar">
+      <div class="step-count"><strong>Paso ${step === 8 ? 7 : step}</strong> de 7 · <em>${mensajesMotivadores[step] || ""}</em></div>
+      ${step < 8 ? `<button class="help-btn" onclick="mostrarAyuda()">💡 ¿Cómo llenar esto?</button>` : ""}
+    </div>
+  `;
+}
+
+function renderProgress(step) {
+  let html = '<div class="progress">';
   for (let i = 1; i <= 7; i++) {
     let cls = "dot";
     if (i === step) cls += " active";
     else if (i < step) cls += " done";
-    dots += `<div class="${cls}"></div>`;
+    html += `<div class="${cls}"></div>`;
   }
-  return dots + '</div>';
+  html += '</div>';
+  return html;
 }
 
 // ============================================
@@ -402,137 +857,234 @@ function renderDots(step) {
 // ============================================
 function renderStep1() {
   return `
-    <div class="step-label">Paso 1 · Identificación</div>
-    <h2 class="step-question">¿Para qué empresa es esta campaña?</h2>
-    <p class="step-help">El nombre de la marca que verá reflejada en el brief final y los guiones.</p>
+    <div class="hero">
+      <div class="hero-emoji">🏢</div>
+      <div class="hero-content">
+        <div class="hero-label">Identificación</div>
+        <div class="hero-title">¿Para qué empresa es esta campaña?</div>
+        <div class="hero-sub">El nombre de la marca que aparecerá en el brief final.</div>
+      </div>
+    </div>
+
     <div class="field">
-      <label class="field-label">Empresa</label>
+      <div class="field-header">
+        <div class="field-label field-label-primary">Empresa</div>
+      </div>
       <input type="text" class="input"
-        placeholder="Tennispremium · Altagama Premium · Yeeshop"
+        placeholder="Ej: Tennispremium · Altagama · Yeeshop"
         value="${escapeHTML(state.empresa)}"
-        oninput="state.empresa = this.value">
+        oninput="state.empresa = this.value; autoSave()">
+      <div class="examples-row">
+        <span class="examples-label">Marcas activas:</span>
+        <button class="example-pill" onclick="setEmpresa('Tennispremium')">🏪 Tennispremium</button>
+        <button class="example-pill" onclick="setEmpresa('Altagama Premium')">🏪 Altagama Premium</button>
+        <button class="example-pill" onclick="setEmpresa('Yeeshop')">🏪 Yeeshop</button>
+      </div>
     </div>
   `;
 }
+function setEmpresa(v) { state.empresa = v; render(); }
 
 // ============================================
-// STEP 2 · #7: Brief extendido
+// STEP 2 · Brief didáctico
 // ============================================
 function renderStep2() {
   const isEstacional = state.tipoCampana === "estacional";
   const isEvergreen = state.tipoCampana === "evergreen";
-  let eventosHTML = "";
-  if (isEstacional) {
-    const eventoActual = state.eventoEstacional;
-    eventosHTML = `
-      <div class="field">
-        <label class="field-label">Evento estacional</label>
-        <select class="select" onchange="state.eventoEstacional = this.value; render()">
-          <option value="">Evento estacional</option>
-          ${EVENTOS_ESTACIONALES.map(e => `
-            <option value="${escapeAttr(e.nombre)}" ${eventoActual === e.nombre ? "selected" : ""}>
-              ${e.mes} · ${e.nombre}
-            </option>
-          `).join("")}
-          <option value="__custom__" ${eventoActual === "__custom__" ? "selected" : ""}>+ Agregar evento personalizado</option>
-        </select>
-      </div>
-      ${eventoActual === "__custom__" ? `
-        <div class="field">
-          <label class="field-label">Nombre del evento custom</label>
-          <input type="text" class="input" placeholder="Ej: Aniversario Serrano, Cyber Monday..."
-            value="${escapeHTML(state.eventoCustom)}"
-            oninput="state.eventoCustom = this.value">
-        </div>
-      ` : ""}
-    `;
+  const eventoActual = state.eventoEstacional;
+  const esEventoPredeterminado = eventoActual && eventoActual !== "__custom__" && eventoActual !== "";
+  const esEventoCustom = eventoActual === "__custom__";
+
+  // Lógica: si eligió evento predeterminado, el nombre se sincroniza automáticamente
+  if (esEventoPredeterminado && state.nombreCampana !== eventoActual) {
+    state.nombreCampana = eventoActual;
   }
+
+  // Mostrar campo de nombre cuando: Evergreen, o Estacional + Otro evento
+  const mostrarNombre = isEvergreen || esEventoCustom;
+  const labelNombre = isEvergreen ? "Nombre de la campaña" : "Nombre del evento";
+  const placeholderNombre = isEvergreen
+    ? "Ej: Always on Running, Campaña continua NB, Colección de invierno..."
+    : "Ej: Aniversario Serrano, Cyber Monday, San Pacho, Feria de Cali...";
+  const valueNombre = isEvergreen
+    ? state.nombreCampana
+    : state.eventoCustom;
+  const onInputNombre = isEvergreen
+    ? "state.nombreCampana = this.value; autoSave()"
+    : "state.eventoCustom = this.value; state.nombreCampana = this.value; autoSave()";
+
   return `
-    <div class="step-label">Paso 2 · Brief</div>
-    <h2 class="step-question">Cuéntame sobre la campaña</h2>
-    <p class="step-help">Entre más contexto le des al brief, mejores saldrán los guiones y copys.</p>
+    <div class="hero">
+      <div class="hero-emoji">📋</div>
+      <div class="hero-content">
+        <div class="hero-label">Brief de campaña</div>
+        <div class="hero-title">Cuéntame sobre tu campaña</div>
+        <div class="hero-sub">Esta info es el alma del brief. Entre más específico, mejores salen los copys.</div>
+      </div>
+    </div>
 
-    <div class="field">
-      <label class="field-label">Nombre de la campaña</label>
-      <input type="text" class="input"
-        placeholder="Ej: DDM 2026, Black Friday, Semestre..."
-        value="${escapeHTML(state.nombreCampana)}"
-        oninput="state.nombreCampana = this.value">
+    <div class="coach">
+      <div class="coach-avatar">🎯</div>
+      <div class="coach-text">
+        <strong>Tip del coach:</strong> Los campos con <strong>✦</strong> son los que más impactan los copys. No te saltes Insight ni Qué NO hacer.
+      </div>
     </div>
 
     <div class="field">
-      <label class="field-label">Contexto de la campaña <span class="field-badge">Recomendado</span></label>
-      <textarea class="textarea" placeholder="¿Por qué este nombre? ¿Qué concepto? Ej: SEMESTRE porque es la colección de regreso a clases..."
-        oninput="state.contextoCampana = this.value">${escapeHTML(state.contextoCampana)}</textarea>
-    </div>
-
-    <div class="field">
-      <label class="field-label">Tipo de campaña</label>
+      <div class="field-label field-label-primary">Tipo de campaña</div>
       <div class="radio-grid">
-        <div class="radio-card ${isEvergreen ? "selected" : ""}" onclick="state.tipoCampana='evergreen'; state.eventoEstacional=''; render()">
+        <div class="radio-card ${isEvergreen ? "selected" : ""}" onclick="setTipoCampana('evergreen')">
           <div class="radio-card-title">🔄 Evergreen</div>
           <div class="radio-card-desc">Siempre activa, sin fecha fin</div>
         </div>
-        <div class="radio-card ${isEstacional ? "selected" : ""}" onclick="state.tipoCampana='estacional'; render()">
+        <div class="radio-card ${isEstacional ? "selected" : ""}" onclick="setTipoCampana('estacional')">
           <div class="radio-card-title">📅 Estacional</div>
           <div class="radio-card-desc">Evento específico con fecha</div>
         </div>
       </div>
+
+      ${isEstacional ? `
+        <div style="margin-top: 14px;">
+          <div class="mini-label">Elige el evento</div>
+          <div class="event-chips">
+            ${EVENTOS_ESTACIONALES.map(e => `
+              <div class="event-chip ${eventoActual === e.nombre ? 'active' : ''}" onclick="seleccionarEvento('${escapeAttr(e.nombre)}')">
+                <span class="event-chip-mes">${e.mes.substring(0,3)}</span>
+                <span class="event-chip-name">${escapeHTML(e.nombre)}</span>
+              </div>
+            `).join("")}
+            <div class="event-chip event-chip-custom ${esEventoCustom ? 'active' : ''}" onclick="seleccionarEvento('__custom__')">
+              <span class="event-chip-mes">✏️</span>
+              <span class="event-chip-name">Otro evento</span>
+            </div>
+          </div>
+        </div>
+      ` : ""}
     </div>
 
-    ${eventosHTML}
-
-    <div style="margin: 24px 0 16px; padding-top: 16px; border-top: 0.5px solid var(--border-light);">
-      <div style="font-size: 11px; color: var(--carbon); letter-spacing: 2px; font-weight: 600; text-transform: uppercase; margin-bottom: 4px;">
-        ✦ Info para afinar guiones y copys
+    ${mostrarNombre ? `
+      <div class="field">
+        <div class="field-header">
+          <div class="field-label field-label-primary">${labelNombre}</div>
+        </div>
+        <input type="text" class="input"
+          placeholder="${placeholderNombre}"
+          value="${escapeHTML(valueNombre)}"
+          oninput="${onInputNombre}">
       </div>
-      <div style="font-size: 11px; color: var(--text-soft); font-style: italic; margin-bottom: 16px;">
-        Todo esto va al prompt maestro. Cuanto más concreto, mejor sale el output.
+    ` : ""}
+
+    ${state.tipoCampana ? `
+      <div class="field">
+        <div class="field-header">
+          <div class="field-label">Contexto de la campaña</div>
+          <div class="field-badge">Recomendado</div>
+        </div>
+        <textarea class="textarea" placeholder="¿Por qué este nombre? ¿Qué concepto? Ej: SEMESTRE porque es regreso a clases..."
+          oninput="state.contextoCampana = this.value; autoSave()">${escapeHTML(state.contextoCampana)}</textarea>
+      </div>
+
+      <div class="field">
+        <div class="field-header">
+          <div class="field-label field-label-primary">Objetivo de la campaña</div>
+        <div class="field-badge">Recomendado</div>
+      </div>
+      <textarea class="textarea" placeholder="¿Qué quieres lograr concretamente? Ej: Incrementar ventas 30% vs PRIMATON 2025..."
+        oninput="state.objetivoCampana = this.value; autoSave()">${escapeHTML(state.objetivoCampana)}</textarea>
+    </div>
+
+    <div class="field">
+      <div class="field-header">
+        <div class="field-label field-label-primary">Público objetivo</div>
+        <div class="field-badge">Recomendado</div>
+      </div>
+      <textarea class="textarea" placeholder="Demografía + intereses + comportamiento. Ej: Hombres y mujeres 25-50 años asalariados formales..."
+        oninput="state.publicoObjetivo = this.value; autoSave()">${escapeHTML(state.publicoObjetivo)}</textarea>
+    </div>
+
+    <div class="field">
+      <div class="field-header">
+        <div class="field-label field-label-primary">Insight · Mensaje clave</div>
+        <div class="field-badge">Recomendado</div>
+      </div>
+      <textarea class="textarea" placeholder="La tensión emocional que hace que compren. Ej: La prima es tuya, te la ganaste..."
+        oninput="state.insightMensajeClave = this.value; autoSave()">${escapeHTML(state.insightMensajeClave)}</textarea>
+      <div class="examples-row">
+        <span class="examples-label">Inspírate:</span>
+        <button class="example-pill" onclick="state.insightMensajeClave='Te ganaste el gusto · la prima es tuya'; render()">💭 Te ganaste el gusto</button>
+        <button class="example-pill" onclick="state.insightMensajeClave='Estrenar con lo tuyo'; render()">💭 Estrenar con lo tuyo</button>
       </div>
     </div>
 
     <div class="field">
-      <label class="field-label">Objetivo de la campaña</label>
-      <textarea class="textarea" placeholder="¿Qué quieres lograr concretamente? Ej: Incrementar ventas 30% vs DDM 2025..."
-        oninput="state.objetivoCampana = this.value">${escapeHTML(state.objetivoCampana)}</textarea>
+      <div class="field-header">
+        <div class="field-label field-label-primary">Propuestas de valor de la marca</div>
+        <div class="field-badge">Recomendado</div>
+      </div>
+      <textarea class="textarea" placeholder="¿Por qué elegirnos? Ej: Entrega 24h, garantía, financiación Addi, atención WhatsApp..."
+        oninput="state.propuestasValor = this.value; autoSave()">${escapeHTML(state.propuestasValor)}</textarea>
     </div>
 
     <div class="field">
-      <label class="field-label">Público objetivo</label>
-      <textarea class="textarea" placeholder="Demografía + intereses + comportamiento. Ej: Hombres y mujeres 25-55 años buscando regalo para mamá..."
-        oninput="state.publicoObjetivo = this.value">${escapeHTML(state.publicoObjetivo)}</textarea>
+      <div class="field-header">
+        <div class="field-label field-label-primary">Tono y estilo</div>
+        <div class="field-badge">Recomendado</div>
+      </div>
+      <textarea class="textarea" placeholder="Cómo debe sonar. Ej: Colombiano natural, cercano, no corporativo..."
+        oninput="state.tonoYestilo = this.value; autoSave()">${escapeHTML(state.tonoYestilo)}</textarea>
     </div>
 
     <div class="field">
-      <label class="field-label">Insight / Mensaje clave</label>
-      <textarea class="textarea" placeholder="¿Cuál es la tensión emocional que hace que compren? Ej: Mamá se dedica a todos, este día tiene que ser para ella..."
-        oninput="state.insightMensajeClave = this.value">${escapeHTML(state.insightMensajeClave)}</textarea>
+      <div class="field-header">
+        <div class="field-label">Llamada a la acción</div>
+        <div class="field-optional">Opcional</div>
+      </div>
+      <textarea class="textarea" placeholder="¿Qué acción? Ej: Comprar en web, WhatsApp, Addi..."
+        oninput="state.llamadaAccion = this.value; autoSave()">${escapeHTML(state.llamadaAccion)}</textarea>
     </div>
 
     <div class="field">
-      <label class="field-label">Propuestas de valor de la marca</label>
-      <textarea class="textarea" placeholder="¿Por qué elegirnos? Ej: Entrega 24h en Cali, garantía, financiación con Addi, atención por WhatsApp..."
-        oninput="state.propuestasValor = this.value">${escapeHTML(state.propuestasValor)}</textarea>
+      <div class="field-header">
+        <div class="field-label field-label-primary">Qué NO hacer</div>
+        <div class="field-badge">Recomendado</div>
+      </div>
+      <textarea class="textarea" placeholder="Limitaciones. Ej: NO urgencia falsa, NO comparar marcas, NO clichés..."
+        oninput="state.queNOhacer = this.value; autoSave()">${escapeHTML(state.queNOhacer)}</textarea>
+      <div class="examples-row">
+        <span class="examples-label">Ideas:</span>
+        <button class="example-pill" onclick="addToNoHacer('NO urgencia falsa')">🚫 Urgencia falsa</button>
+        <button class="example-pill" onclick="addToNoHacer('NO comparar con marcas')">🚫 Comparar marcas</button>
+        <button class="example-pill" onclick="addToNoHacer('NO moralizar al cliente')">🚫 Moralizar</button>
+      </div>
     </div>
-
-    <div class="field">
-      <label class="field-label">Tono y estilo</label>
-      <textarea class="textarea" placeholder="Cómo debe sonar la marca. Ej: Colombiano natural, cercano, no corporativo..."
-        oninput="state.tonoYestilo = this.value">${escapeHTML(state.tonoYestilo)}</textarea>
-    </div>
-
-    <div class="field">
-      <label class="field-label">Llamada a la acción</label>
-      <textarea class="textarea" placeholder="¿Qué acción quieres que tome el cliente? Ej: Comprar en la web, escribir por WhatsApp, apartar con Addi..."
-        oninput="state.llamadaAccion = this.value">${escapeHTML(state.llamadaAccion)}</textarea>
-    </div>
-
-    <div class="field">
-      <label class="field-label">Qué NO hacer</label>
-      <textarea class="textarea" placeholder="Limitaciones. Ej: NO usar urgencia barata, NO comparar con marcas directamente..."
-        oninput="state.queNOhacer = this.value">${escapeHTML(state.queNOhacer)}</textarea>
-    </div>
+    ` : ""}
   `;
+}
+
+function setTipoCampana(tipo) {
+  state.tipoCampana = tipo;
+  if (tipo === 'evergreen') {
+    state.eventoEstacional = '';
+    state.eventoCustom = '';
+  }
+  render();
+}
+
+function seleccionarEvento(ev) {
+  state.eventoEstacional = ev;
+  if (ev === '__custom__') {
+    state.eventoCustom = '';
+    state.nombreCampana = '';
+  } else {
+    state.eventoCustom = '';
+    state.nombreCampana = ev;
+  }
+  render();
+}
+function addToNoHacer(text) {
+  const cur = state.queNOhacer || "";
+  state.queNOhacer = cur ? cur + ". " + text : text;
+  render();
 }
 
 // ============================================
@@ -540,57 +1092,209 @@ function renderStep2() {
 // ============================================
 function renderStep3() {
   const ofertas = [
-    { val: "escalonada", titulo: "Escalonada por cantidad", desc: "1 par envío gratis · 2 pares -10% · 3 pares -15% · 4+ -20%" },
-    { val: "descuento", titulo: "Descuento fijo", desc: "Un porcentaje único para toda la colección" },
-    { val: "2x1", titulo: "2x1 o combos", desc: "Lleva 2 paga 1 u ofertas combinadas" },
-    { val: "envio", titulo: "Envío gratis", desc: "Sin descuento, solo envío incluido" },
-    { val: "financiacion", titulo: "Financiación destacada", desc: "Cuotas con Addi o Sistecrédito" },
-    { val: "otra", titulo: "Otra oferta personalizada", desc: "Tú describes la promoción" }
+    { val: "escalonada", titulo: "Escalonada por cantidad", desc: "1 par envío gratis · 2 pares -10% · 3 pares -15% · 4+ -20%", icon: "📊" },
+    { val: "descuento", titulo: "Descuento fijo", desc: "Un porcentaje único para toda la colección", icon: "🏷️" },
+    { val: "2x1", titulo: "2x1 o combos", desc: "Lleva 2 paga 1 u ofertas combinadas", icon: "🎁" },
+    { val: "envio", titulo: "Envío gratis", desc: "Sin descuento, solo envío incluido", icon: "📦" },
+    { val: "financiacion", titulo: "Financiación destacada", desc: "Cuotas con Addi o Sistecrédito", icon: "💳" },
+    { val: "precio-plano", titulo: "Precio plano", desc: "Todo a un precio único (tipo PRIMATON)", icon: "🎯" },
+    { val: "otra", titulo: "Otra oferta personalizada", desc: "Tú describes la promoción", icon: "✍️" }
   ];
+
+  // Chips dinámicos según oferta elegida
+  const chipsDetallePorOferta = {
+    "escalonada": ["1 par envío gratis, 2 pares -10%, 3+ -20%", "Compra 2 -15%, 3 -20%, 4+ -25%", "Desde el par 2, -20% en toda la compra"],
+    "descuento": ["20% OFF toda la tienda", "30% OFF seleccionados + 10% extra con cupón", "-15% primera compra"],
+    "2x1": ["Lleva 2 paga 1 (el de menor valor gratis)", "3x2 en running", "Combo 2 pares $295.000"],
+    "envio": ["Envío gratis desde $150.000", "Envío gratis todo Colombia sin mínimo", "Envío gratis 24h Cali"],
+    "financiacion": ["Addi hasta 4 cuotas sin interés", "Sistecrédito 12 meses", "Addi + 10% OFF extra"],
+    "precio-plano": ["Todo a $195.000", "Dos precios: $150.000 y $250.000", "Precio plano $180.000 modelos seleccionados"],
+    "otra": ["Sorteo + descuento", "Preventa VIP", "Oferta flash 24h"]
+  };
+  const chipsPago = ["Addi", "Sistecrédito", "Transferencia Bancolombia", "PSE", "Efectivo contra entrega", "Tarjeta de crédito"];
+  const chipsRegalo = ["Par de medias de regalo", "Bolso ecológico", "Cordones extra", "Sin regalo"];
+  const chipsGarantia = ["30 días por defectos de fábrica", "6 meses de garantía", "1 año de garantía", "Sin garantía"];
+  const chipsCambios = ["Cambio por talla en 8 días", "Cambio por talla o modelo en 15 días", "No aplica cambios en oferta"];
+  const chipsEnvio = ["Envío gratis toda Colombia", "Envío gratis desde $150.000", "Envío $12.000 Servientrega", "Envío 24h Cali / 48-72h resto"];
+
+  const chipsDetalle = chipsDetallePorOferta[state.tipoOferta] || [];
+  const mostrarCampos = state.tipoOferta && state.tipoOferta !== "";
+
   return `
-    <div class="step-label">Paso 3 · Oferta</div>
-    <h2 class="step-question">¿Qué oferta manejas?</h2>
-    <p class="step-help">El incentivo principal que verán los clientes.</p>
+    <div class="hero">
+      <div class="hero-emoji">🎁</div>
+      <div class="hero-content">
+        <div class="hero-label">Oferta comercial</div>
+        <div class="hero-title">¿Qué oferta vas a manejar?</div>
+        <div class="hero-sub">El gancho que hace que el cliente decida comprar AHORA.</div>
+      </div>
+    </div>
+
+    <div class="coach">
+      <div class="coach-avatar">🎯</div>
+      <div class="coach-text">
+        <strong>Tip Serrano:</strong> Las ofertas claras convierten más que las complicadas. <strong>"Todo a $195.000"</strong> > "15% OFF con 2x1 adicional".
+      </div>
+    </div>
+
     <div class="field">
-      ${ofertas.map(o => `
-        <div class="radio-card ${state.tipoOferta === o.val ? "selected" : ""}" onclick="state.tipoOferta='${o.val}'; render()" style="margin-bottom: 6px;">
-          <div class="radio-card-title">${o.titulo}</div>
+      <div class="field-label">Tipo de oferta</div>
+      ${!state.tipoOferta ? ofertas.map(o => `
+        <div class="radio-card" onclick="state.tipoOferta='${o.val}'; render()" style="margin-bottom: 6px;">
+          <div class="radio-card-title">${o.icon} ${o.titulo}</div>
           <div class="radio-card-desc">${o.desc}</div>
         </div>
-      `).join("")}
+      `).join("") : (() => {
+        const elegida = ofertas.find(o => o.val === state.tipoOferta);
+        if (!elegida) return "";
+        return `
+          <div class="radio-card selected" style="margin-bottom: 6px;">
+            <div class="radio-card-title">${elegida.icon} ${elegida.titulo}</div>
+            <div class="radio-card-desc">${elegida.desc}</div>
+          </div>
+          <button class="btn-cambiar-oferta" onclick="cambiarTipoOferta()">↺ Cambiar tipo de oferta</button>
+        `;
+      })()}
     </div>
+
     ${state.tipoOferta === "otra" ? `
       <div class="field">
-        <label class="field-label">Descripción de la oferta</label>
-        <textarea class="textarea" placeholder="Describe tu oferta personalizada..."
-          oninput="state.otraOferta = this.value">${escapeHTML(state.otraOferta)}</textarea>
+        <div class="field-label field-label-primary">Describe tu oferta personalizada</div>
+        <textarea class="textarea" placeholder="Ej: Sorteo: quien compre en abril participa por un par gratis..."
+          oninput="state.otraOferta = this.value; autoSave()">${escapeHTML(state.otraOferta)}</textarea>
       </div>
     ` : ""}
-    <div class="field">
-      <label class="field-label">Contexto de la oferta <span class="field-badge">Recomendado</span></label>
-      <textarea class="textarea" placeholder="Ej: Código SEMESTRE con -$20.000 para estudiantes universitarios..."
-        oninput="state.contextoOferta = this.value">${escapeHTML(state.contextoOferta)}</textarea>
-    </div>
+
+    ${mostrarCampos ? `
+      <div class="oferta-details">
+        <div class="oferta-details-title">
+          <span class="oferta-details-icon">✦</span>
+          Detalles que enriquecen tu copy y guion
+        </div>
+        <div class="oferta-details-sub">Entre más específico, mejores salen los copys y los guiones de video.</div>
+
+        ${chipsDetalle.length > 0 ? `
+          <div class="field">
+            <div class="field-header">
+              <div class="field-label field-label-primary">Detalla tu oferta</div>
+              <div class="field-badge">Recomendado</div>
+            </div>
+            <div class="idea-chips">
+              <span class="idea-chips-label">💡 Ideas · toca para insertar:</span>
+              ${chipsDetalle.map(c => `<button class="idea-chip" onclick="setOfertaField('contextoOferta', ${JSON.stringify(c).replace(/"/g, '&quot;')})">${escapeHTML(c)}</button>`).join("")}
+            </div>
+            <textarea class="textarea" placeholder="Ej: Código PRIMATON activo del 1 al 30 de junio, aprovechando la prima legal..."
+              oninput="state.contextoOferta = this.value; autoSave()">${escapeHTML(state.contextoOferta)}</textarea>
+          </div>
+        ` : ""}
+
+        <div class="field">
+          <div class="field-header">
+            <div class="field-label">Métodos de pago</div>
+          </div>
+          <div class="idea-chips">
+            <span class="idea-chips-label">💡 Ideas:</span>
+            ${chipsPago.map(c => `<button class="idea-chip" onclick="appendOfertaField('ofertaMetodosPago', ${JSON.stringify(c).replace(/"/g, '&quot;')})">${escapeHTML(c)}</button>`).join("")}
+          </div>
+          <textarea class="textarea" style="min-height: 60px;" placeholder="Ej: Addi hasta 4 cuotas, Sistecrédito, transferencia Bancolombia, efectivo contra entrega..."
+            oninput="state.ofertaMetodosPago = this.value; autoSave()">${escapeHTML(state.ofertaMetodosPago)}</textarea>
+        </div>
+
+        <div class="field">
+          <div class="field-header">
+            <div class="field-label">¿Tiene algún regalo?</div>
+          </div>
+          <div class="idea-chips">
+            <span class="idea-chips-label">💡 Ideas:</span>
+            ${chipsRegalo.map(c => `<button class="idea-chip" onclick="setOfertaField('ofertaRegalo', ${JSON.stringify(c).replace(/"/g, '&quot;')})">${escapeHTML(c)}</button>`).join("")}
+          </div>
+          <textarea class="textarea" style="min-height: 60px;" placeholder="Ej: Todos los pedidos se llevan un par de medias de regalo + tarjeta personalizada..."
+            oninput="state.ofertaRegalo = this.value; autoSave()">${escapeHTML(state.ofertaRegalo)}</textarea>
+        </div>
+
+        <div class="field">
+          <div class="field-header">
+            <div class="field-label">¿Garantía?</div>
+          </div>
+          <div class="idea-chips">
+            <span class="idea-chips-label">💡 Ideas:</span>
+            ${chipsGarantia.map(c => `<button class="idea-chip" onclick="setOfertaField('ofertaGarantia', ${JSON.stringify(c).replace(/"/g, '&quot;')})">${escapeHTML(c)}</button>`).join("")}
+          </div>
+          <textarea class="textarea" style="min-height: 60px;" placeholder="Ej: 30 días por cualquier defecto de fábrica. Si algo falla, te lo cambiamos sin preguntas..."
+            oninput="state.ofertaGarantia = this.value; autoSave()">${escapeHTML(state.ofertaGarantia)}</textarea>
+        </div>
+
+        <div class="field">
+          <div class="field-header">
+            <div class="field-label">¿Cambios de producto?</div>
+          </div>
+          <div class="idea-chips">
+            <span class="idea-chips-label">💡 Ideas:</span>
+            ${chipsCambios.map(c => `<button class="idea-chip" onclick="setOfertaField('ofertaCambios', ${JSON.stringify(c).replace(/"/g, '&quot;')})">${escapeHTML(c)}</button>`).join("")}
+          </div>
+          <textarea class="textarea" style="min-height: 60px;" placeholder="Ej: Si no te queda la talla, lo cambiamos en 8 días. También puedes cambiar por otro modelo..."
+            oninput="state.ofertaCambios = this.value; autoSave()">${escapeHTML(state.ofertaCambios)}</textarea>
+        </div>
+
+        <div class="field">
+          <div class="field-header">
+            <div class="field-label">Envío</div>
+          </div>
+          <div class="idea-chips">
+            <span class="idea-chips-label">💡 Ideas:</span>
+            ${chipsEnvio.map(c => `<button class="idea-chip" onclick="setOfertaField('ofertaEnvio', ${JSON.stringify(c).replace(/"/g, '&quot;')})">${escapeHTML(c)}</button>`).join("")}
+          </div>
+          <textarea class="textarea" style="min-height: 60px;" placeholder="Ej: Envío gratis en toda Colombia por compras superiores a $150.000..."
+            oninput="state.ofertaEnvio = this.value; autoSave()">${escapeHTML(state.ofertaEnvio)}</textarea>
+        </div>
+      </div>
+    ` : ""}
   `;
+}
+function setOfertaField(field, value) {
+  state[field] = value;
+  render();
+}
+function cambiarTipoOferta() {
+  state.tipoOferta = "";
+  state.otraOferta = "";
+  render();
+}
+function appendOfertaField(field, value) {
+  const cur = state[field] || "";
+  state[field] = cur ? cur + ", " + value : value;
+  render();
 }
 
 // ============================================
-// STEP 4 · #12: Modelos con precios inline
+// STEP 4
 // ============================================
 function renderStep4() {
   const todosModelos = getAllModelos();
   return `
-    <div class="step-label">Paso 4 · Catálogo</div>
-    <h2 class="step-question">¿Qué modelos usas en esta campaña?</h2>
-    <p class="step-help">Marca los modelos y agrega precios para que los copys y guiones usen cifras reales.</p>
+    <div class="hero">
+      <div class="hero-emoji">👟</div>
+      <div class="hero-content">
+        <div class="hero-label">Catálogo</div>
+        <div class="hero-title">¿Qué modelos entran en esta campaña?</div>
+        <div class="hero-sub">Marca los modelos y agrega precios reales para que los copys no inventen cifras.</div>
+      </div>
+    </div>
+
+    <div class="coach">
+      <div class="coach-avatar">💰</div>
+      <div class="coach-text">
+        <strong>Importante:</strong> Los precios que metas aquí van EXACTOS a los copys de Claude Code. Sin aproximaciones.
+      </div>
+    </div>
 
     <div class="field">
-      <label class="field-label">Modelos Tennispremium</label>
+      <div class="field-label">Modelos disponibles</div>
       ${todosModelos.map(m => renderModeloPrecio(m)).join("")}
     </div>
 
     <div class="field">
-      <label class="field-label">Agregar modelo personalizado</label>
+      <div class="field-label">Agregar modelo personalizado</div>
       <div style="display: flex; gap: 6px;">
         <input type="text" class="input" id="nuevoModelo" placeholder="Nombre del modelo nuevo">
         <button class="btn btn-secondary" style="padding: 11px 18px;" onclick="agregarModelo()">+ Agregar</button>
@@ -599,7 +1303,7 @@ function renderStep4() {
 
     <div class="pill">
       <span class="pill-dot"></span>
-      <span><strong style="color: var(--graphite);">${state.modelosSeleccionados.length}</strong> modelos seleccionados</span>
+      <span><strong style="color: var(--graphite);">${state.modelosSeleccionados.length}</strong> modelo${state.modelosSeleccionados.length !== 1 ? "s" : ""} seleccionado${state.modelosSeleccionados.length !== 1 ? "s" : ""}</span>
     </div>
   `;
 }
@@ -607,6 +1311,7 @@ function renderStep4() {
 function renderModeloPrecio(m) {
   const selected = state.modelosSeleccionados.includes(m);
   const precios = state.preciosModelos[m] || { antes: "", ahora: "" };
+  const desc = state.modelosDescripcion[m] || "";
   return `
     <div class="modelo-precio-card ${selected ? "selected" : ""}">
       <div class="modelo-precio-row">
@@ -629,27 +1334,38 @@ function renderModeloPrecio(m) {
           </div>
         ` : `<div style="font-size: 10px; color: var(--silver); font-style: italic;">Marca para configurar precio</div>`}
       </div>
+      ${selected ? `
+        <div class="modelo-desc-wrap">
+          <div class="modelo-desc-label">Descripción del producto <span style="color: var(--text-soft); font-weight: 400;">· enriquece el copy y guion</span></div>
+          <textarea class="modelo-desc-textarea" placeholder="Ej: ${escapeHTML(m)} en cuero sintético premium con malla transpirable. Ideal para uso diario y streetwear. Lo que lo hace especial es su plantilla memory foam y suela antideslizante. Para quienes buscan comodidad sin perder estilo."
+            oninput="updateModeloDesc('${escapeAttr(m)}', this.value)">${escapeHTML(desc)}</textarea>
+        </div>
+      ` : ""}
     </div>
   `;
 }
-
+function updateModeloDesc(modelo, valor) {
+  if (!state.modelosDescripcion) state.modelosDescripcion = {};
+  state.modelosDescripcion[modelo] = valor;
+  autoSave();
+}
 function toggleModelo(nombre) {
   const idx = state.modelosSeleccionados.indexOf(nombre);
   if (idx >= 0) {
     state.modelosSeleccionados.splice(idx, 1);
     delete state.preciosModelos[nombre];
+    if (state.modelosDescripcion) delete state.modelosDescripcion[nombre];
   } else {
     state.modelosSeleccionados.push(nombre);
     state.preciosModelos[nombre] = { antes: "", ahora: "" };
   }
   render();
 }
-
 function updatePrecio(modelo, tipo, valor) {
   if (!state.preciosModelos[modelo]) state.preciosModelos[modelo] = { antes: "", ahora: "" };
   state.preciosModelos[modelo][tipo] = parseMoney(valor);
+  autoSave();
 }
-
 function agregarModelo() {
   const input = document.getElementById("nuevoModelo");
   const valor = input.value.trim();
@@ -664,66 +1380,286 @@ function agregarModelo() {
 }
 
 // ============================================
-// STEP 5 · CORRECCIONES #1, #3, #6, #10, #11
+// STEP 5 · Estructura con asistente automático
 // ============================================
 function renderStep5() {
-  if (state.campanas.length === 0) {
-    state.campanas.push(newCampana(state.nombreCampana || "Campaña 1"));
-  }
-  return `
-    <div class="step-label">Paso 5 · Estructura Meta Ads</div>
-    <h2 class="step-question">Construye tu estructura publicitaria</h2>
-    <p class="step-help">Define objetivo, presupuesto ABO/CBO, campañas, conjuntos y piezas.</p>
+  const hayCampanas = state.campanas.length > 0;
+  const piezasTotales = state.campanas.reduce((a,c) => a + c.conjuntos.reduce((b,cj) => b + cj.piezas.length, 0), 0);
+  const mostrarAsistente = !hayCampanas || piezasTotales === 0;
 
-    <div class="field">
-      <label class="field-label">Objetivo principal del brief</label>
-      <div class="chips">
-        ${OBJETIVOS_META.map(o => `
-          <div class="chip ${state.objetivo === o ? "active" : ""}" onclick="state.objetivo='${o}'; render()">${o}</div>
-        `).join("")}
+  return `
+    <div class="hero">
+      <div class="hero-emoji">🏗️</div>
+      <div class="hero-content">
+        <div class="hero-label">Estructura Meta Ads</div>
+        <div class="hero-title">Arma tu estrategia publicitaria</div>
+        <div class="hero-sub">Define objetivo, presupuesto y estructura de campañas, conjuntos y piezas.</div>
       </div>
     </div>
 
     <div class="field">
-      <label class="field-label">Tipo de presupuesto</label>
+      <div class="field-label">Objetivo principal de la campaña</div>
+      <div class="objetivos-grid">
+        ${OBJETIVOS_META.map(o => `<div class="objetivo-chip ${state.objetivo === o.nombre ? "active" : ""}" onclick="state.objetivo='${o.nombre}'; render()">
+          <div class="objetivo-chip-name">${o.nombre}</div>
+          <div class="objetivo-chip-desc">${o.desc}</div>
+        </div>`).join("")}
+      </div>
+    </div>
+
+    <div class="field">
+      <div class="field-label">Tipo de presupuesto</div>
       <div class="radio-grid">
         <div class="radio-card ${state.tipoPresupuesto === 'ABO' ? "selected" : ""}" onclick="state.tipoPresupuesto='ABO'; render()">
-          <div class="radio-card-title">ABO</div>
-          <div class="radio-card-desc">Presupuesto por conjunto (manual, % debe sumar 100)</div>
+          <div class="radio-card-title">💼 ABO</div>
+          <div class="radio-card-desc">% por conjunto · manual · debe sumar 100</div>
         </div>
         <div class="radio-card ${state.tipoPresupuesto === 'CBO' ? "selected" : ""}" onclick="state.tipoPresupuesto='CBO'; render()">
-          <div class="radio-card-title">CBO</div>
-          <div class="radio-card-desc">Presupuesto global (Meta optimiza)</div>
+          <div class="radio-card-title">🤖 CBO</div>
+          <div class="radio-card-desc">Meta optimiza el presupuesto global</div>
         </div>
       </div>
     </div>
 
-    <div class="field">
-      <label class="field-label">Campañas</label>
-      ${state.campanas.map((c, ci) => renderCampana(c, ci)).join("")}
-      <button class="btn-add-dashed primary" onclick="agregarCampana()">+ Agregar otra campaña</button>
-    </div>
+    ${mostrarAsistente ? renderAsistenteAuto() : ''}
 
-    ${renderResumen()}
+    ${hayCampanas && piezasTotales > 0 ? `
+      <div class="field">
+        <div class="field-header">
+          <div class="field-label">Campañas creadas</div>
+          <div class="modo-actual-pill">
+            Modo: <strong>${state.autoMode === 'quick' ? '⚡ Rápido' : '🎯 Personalizado'}</strong>
+          </div>
+        </div>
+        <div class="top-actions">
+          <button class="btn-top-action" onclick="cambiarModoCreacion()">↺ Cambiar modo (a ${state.autoMode === 'quick' ? 'Personalizado' : 'Rápido'})</button>
+          <button class="btn-top-action btn-top-danger" onclick="resetCampanas()">↻ Reiniciar estructura</button>
+        </div>
+        ${state.campanas.map((c, ci) => renderCampana(c, ci)).join("")}
+        <button class="btn-add-dashed primary" onclick="agregarCampana()">+ Agregar otra campaña</button>
+      </div>
+      ${renderResumen()}
+    ` : ''}
   `;
 }
 
+function resetCampanas() {
+  showConfirm("¿Reiniciar el asistente? Se perderán todas las campañas y piezas creadas.", () => {
+    state.campanas = [];
+    render();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+}
+
+function cambiarModoCreacion() {
+  showConfirm("Cambiar de modo reiniciará la estructura actual. ¿Continuar?", () => {
+    state.autoMode = state.autoMode === "quick" ? "custom" : "quick";
+    state.campanas = [];
+    render();
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  });
+}
+
+function renderAsistenteAuto() {
+  const modo = state.autoMode;
+  const campanas = state.autoCampanas;
+  const conjuntos = state.autoConjuntos;
+  const piezasUniformes = state.autoPiezasXConj;
+  
+  // Sincronizar array personalizado con número de conjuntos
+  while (state.autoPiezasCustom.length < conjuntos) state.autoPiezasCustom.push(5);
+  while (state.autoPiezasCustom.length > conjuntos) state.autoPiezasCustom.pop();
+  
+  const totalPiezas = modo === "quick" 
+    ? campanas * conjuntos * piezasUniformes
+    : campanas * state.autoPiezasCustom.reduce((a,b) => a + b, 0);
+
+  return `
+    <div class="auto-builder">
+      <div class="auto-builder-title">⚡ Asistente de creación automática</div>
+      <div class="auto-builder-heading">Arma tu estructura en pocos clicks</div>
+
+      <div class="coach">
+        <div class="coach-avatar">🏗️</div>
+        <div class="coach-text">
+          <strong>Tip:</strong> Elige <strong>Rápido</strong> si quieres el mismo nº de piezas en todos los conjuntos. <strong>Personalizado</strong> si quieres cantidades distintas por conjunto. Después llenas cada pieza a tu gusto.
+        </div>
+      </div>
+
+      <div class="mode-toggle">
+        <div class="mode-card ${modo === 'quick' ? 'selected' : ''}" onclick="state.autoMode='quick'; render()">
+          <div class="mode-card-header">
+            <div class="mode-icon">⚡</div>
+            <div class="mode-title">Rápido</div>
+          </div>
+          <div class="mode-desc">Mismo nº de piezas en todos los conjuntos</div>
+        </div>
+        <div class="mode-card ${modo === 'custom' ? 'selected' : ''}" onclick="state.autoMode='custom'; render()">
+          <div class="mode-card-header">
+            <div class="mode-icon">🎯</div>
+            <div class="mode-title">Personalizado</div>
+          </div>
+          <div class="mode-desc">Piezas distintas por conjunto</div>
+        </div>
+      </div>
+
+      <div class="layer">
+        <div class="layer-header">
+          <div class="layer-icon c1">📁</div>
+          <div>
+            <div class="layer-name">Campañas</div>
+            <div class="layer-desc">El nivel más alto de tu estrategia</div>
+          </div>
+        </div>
+        <div class="stepper">
+          <button class="stepper-btn" onclick="autoStep('camp', -1)" ${campanas <= 1 ? 'disabled' : ''}>−</button>
+          <div class="stepper-val">${campanas}</div>
+          <button class="stepper-btn" onclick="autoStep('camp', 1)" ${campanas >= 5 ? 'disabled' : ''}>+</button>
+          <div class="stepper-label">campaña${campanas > 1 ? 's' : ''}</div>
+        </div>
+      </div>
+
+      <div class="layer">
+        <div class="layer-header">
+          <div class="layer-icon c2">📂</div>
+          <div>
+            <div class="layer-name">Conjuntos por campaña</div>
+            <div class="layer-desc">Cada uno con su público y presupuesto</div>
+          </div>
+        </div>
+        <div class="stepper">
+          <button class="stepper-btn" onclick="autoStep('conj', -1)" ${conjuntos <= 1 ? 'disabled' : ''}>−</button>
+          <div class="stepper-val">${conjuntos}</div>
+          <button class="stepper-btn" onclick="autoStep('conj', 1)" ${conjuntos >= 8 ? 'disabled' : ''}>+</button>
+          <div class="stepper-label">conjunto${conjuntos > 1 ? 's' : ''}</div>
+        </div>
+      </div>
+
+      ${modo === 'quick' ? `
+        <div class="layer">
+          <div class="layer-header">
+            <div class="layer-icon c3">🎬</div>
+            <div>
+              <div class="layer-name">Piezas por conjunto</div>
+              <div class="layer-desc">Videos, imágenes o carruseles</div>
+            </div>
+          </div>
+          <div class="stepper">
+            <button class="stepper-btn" onclick="autoStep('pieza', -1)" ${piezasUniformes <= 1 ? 'disabled' : ''}>−</button>
+            <div class="stepper-val">${piezasUniformes}</div>
+            <button class="stepper-btn" onclick="autoStep('pieza', 1)" ${piezasUniformes >= 12 ? 'disabled' : ''}>+</button>
+            <div class="stepper-label">pieza${piezasUniformes > 1 ? 's' : ''}</div>
+          </div>
+        </div>
+      ` : `
+        <div class="personalized-list">
+          <div class="layer-header" style="margin-bottom: 10px;">
+            <div class="layer-icon c3">🎬</div>
+            <div>
+              <div class="layer-name">Ajusta piezas por conjunto</div>
+              <div class="layer-desc">Tú defines cuántas lleva cada uno</div>
+            </div>
+          </div>
+          ${state.autoPiezasCustom.map((n, i) => {
+            return `
+              <div class="conj-row" data-idx="${i}">
+                <div class="conj-num">${i + 1}</div>
+                <div class="conj-funnel-name">Conjunto ${i + 1}</div>
+                <div class="stepper-mini">
+                  <button class="mini-btn" onclick="autoCustomStep(${i}, -1)" ${n <= 1 ? 'disabled' : ''}>−</button>
+                  <div class="mini-val">${n}</div>
+                  <button class="mini-btn" onclick="autoCustomStep(${i}, 1)" ${n >= 12 ? 'disabled' : ''}>+</button>
+                </div>
+              </div>
+            `;
+          }).join("")}
+        </div>
+      `}
+
+      <div class="stats-row">
+        <div class="stat-card">
+          <div class="stat-num">${campanas}</div>
+          <div class="stat-label">Campaña${campanas > 1 ? 's' : ''}</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">${campanas * conjuntos}</div>
+          <div class="stat-label">Conjuntos</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-num">${totalPiezas}</div>
+          <div class="stat-label">Piezas total</div>
+        </div>
+      </div>
+
+      <button class="btn-auto-create" onclick="crearEstructuraAuto()">⚡ Crear estructura · ${totalPiezas} pieza${totalPiezas !== 1 ? 's' : ''}</button>
+    </div>
+  `;
+}
+
+function autoStep(tipo, delta) {
+  if (tipo === "camp") {
+    const n = Math.max(1, Math.min(5, state.autoCampanas + delta));
+    state.autoCampanas = n;
+  } else if (tipo === "conj") {
+    const n = Math.max(1, Math.min(8, state.autoConjuntos + delta));
+    state.autoConjuntos = n;
+  } else if (tipo === "pieza") {
+    const n = Math.max(1, Math.min(12, state.autoPiezasXConj + delta));
+    state.autoPiezasXConj = n;
+  }
+  render();
+}
+function autoCustomStep(idx, delta) {
+  const current = state.autoPiezasCustom[idx] || 1;
+  state.autoPiezasCustom[idx] = Math.max(1, Math.min(12, current + delta));
+  render();
+}
+
+function crearEstructuraAuto() {
+  const modo = state.autoMode;
+  const ncamp = state.autoCampanas;
+  const nconj = state.autoConjuntos;
+  const baseNombre = state.nombreCampana || "Campaña";
+  
+  state.campanas = [];
+  for (let ci = 0; ci < ncamp; ci++) {
+    const nombreCamp = ncamp === 1 ? baseNombre : `${baseNombre} ${ci + 1}`;
+    const camp = { id: "CA" + Math.random().toString(36).substr(2, 5).toUpperCase(), nombre: nombreCamp, conjuntos: [] };
+    for (let cji = 0; cji < nconj; cji++) {
+      const nombreConj = `Conjunto ${cji + 1}`;
+      const conj = newConjunto(nombreConj, "");
+      const nPiezas = modo === "quick" ? state.autoPiezasXConj : (state.autoPiezasCustom[cji] || 1);
+      for (let pi = 0; pi < nPiezas; pi++) {
+        conj.piezas.push(newPieza("activa"));
+      }
+      camp.conjuntos.push(conj);
+    }
+    state.campanas.push(camp);
+  }
+  // Distribuir % si ABO: dividir 100% entre conjuntos equitativamente
+  if (state.tipoPresupuesto === "ABO") {
+    state.campanas.forEach(c => {
+      const n = c.conjuntos.length;
+      const base = Math.floor(100 / n);
+      const resto = 100 - (base * n);
+      c.conjuntos.forEach((cj, i) => cj.porcentaje = base + (i === 0 ? resto : 0));
+    });
+  }
+  render();
+}
+
 function renderCampana(camp, ci) {
-  // #11: Validación de %
   let sumaPorc = 0;
   camp.conjuntos.forEach(cj => sumaPorc += (parseInt(cj.porcentaje) || 0));
   const showPorc = state.tipoPresupuesto === "ABO";
-  
   let porcAlert = "";
   if (showPorc && camp.conjuntos.length > 0) {
-    if (sumaPorc === 100) {
-      porcAlert = `<div class="budget-ok">✓ Presupuesto asignado: 100% (correcto)</div>`;
-    } else {
+    if (sumaPorc === 100) porcAlert = `<div class="budget-ok">✓ Presupuesto asignado: 100% (correcto)</div>`;
+    else {
       const diff = 100 - sumaPorc;
-      porcAlert = `<div class="budget-warning">⚠ Presupuesto asignado: ${sumaPorc}% · ${diff > 0 ? 'Falta ' + diff + '%' : 'Sobra ' + Math.abs(diff) + '%'}</div>`;
+      porcAlert = `<div class="budget-warning">⚠ Asignado: ${sumaPorc}% · ${diff > 0 ? 'Falta ' + diff + '%' : 'Sobra ' + Math.abs(diff) + '%'}</div>`;
     }
   }
-
   return `
     <div class="campaign-card">
       <div class="campaign-header">
@@ -732,18 +1668,16 @@ function renderCampana(camp, ci) {
       </div>
       <div class="field">
         <input type="text" class="input" style="font-size: 12px;"
-          placeholder="Nombre de la campaña (ej: DDM 2026 | Ventas)"
+          placeholder="Nombre de la campaña"
           value="${escapeHTML(camp.nombre)}"
-          oninput="state.campanas[${ci}].nombre = this.value">
+          oninput="state.campanas[${ci}].nombre = this.value; autoSave()">
       </div>
       <div class="mini-label">Conjuntos de anuncio</div>
       ${camp.conjuntos.map((conj, cji) => renderConjunto(conj, ci, cji)).join("")}
       <button class="btn-add-dashed" onclick="agregarConjunto(${ci})">+ Agregar conjunto</button>
       ${porcAlert}
       ${state.tipoCampana === "estacional" && camp.conjuntos.length > 1 && camp.conjuntos[0].piezas.length > 0 ? `
-        <button class="btn-duplicate" onclick="duplicarPiezas(${ci})">
-          🔄 Duplicar piezas del Conjunto 1 a los demás conjuntos
-        </button>
+        <button class="btn-duplicate" onclick="duplicarPiezas(${ci})">🔄 Duplicar piezas del Conjunto 1 a los demás</button>
       ` : ""}
     </div>
   `;
@@ -752,10 +1686,11 @@ function renderCampana(camp, ci) {
 function renderConjunto(conj, ci, cji) {
   const badgeIdx = cji % 8;
   const showPorc = state.tipoPresupuesto === "ABO";
+  const conjLabel = `Conjunto ${cji + 1}`;
   return `
     <div class="conjunto-card" data-idx="${badgeIdx}">
       <div class="conjunto-header">
-        <span class="conjunto-badge" data-idx="${badgeIdx}">Conjunto ${cji + 1}</span>
+        <span class="conjunto-badge" data-idx="${badgeIdx}">${conjLabel}</span>
         ${state.campanas[ci].conjuntos.length > 1 ? `<button class="btn-link btn-danger" onclick="eliminarConjunto(${ci}, ${cji})">Eliminar</button>` : ""}
       </div>
       <div class="${showPorc ? 'row-3' : 'row-2'}">
@@ -763,7 +1698,7 @@ function renderConjunto(conj, ci, cji) {
           <div class="mini-label">Nombre</div>
           <input type="text" class="mini-input" placeholder="Nombre del conjunto"
             value="${escapeHTML(conj.nombre)}"
-            oninput="state.campanas[${ci}].conjuntos[${cji}].nombre = this.value">
+            oninput="state.campanas[${ci}].conjuntos[${cji}].nombre = this.value; autoSave()">
         </div>
         <div>
           <div class="mini-label">Público</div>
@@ -771,7 +1706,7 @@ function renderConjunto(conj, ci, cji) {
           ${conj.publico === "__custom__" ? `
             <input type="text" class="custom-input-inline" placeholder="Escribe el público"
               value="${escapeHTML(conj.publicoCustom)}"
-              oninput="state.campanas[${ci}].conjuntos[${cji}].publicoCustom = this.value">
+              oninput="state.campanas[${ci}].conjuntos[${cji}].publicoCustom = this.value; autoSave()">
           ` : ""}
         </div>
         ${showPorc ? `
@@ -783,118 +1718,229 @@ function renderConjunto(conj, ci, cji) {
           </div>
         ` : ''}
       </div>
-      <div class="mini-label" style="margin-top: 10px;">Piezas</div>
-      ${conj.piezas.map((p, pi) => renderPieza(p, ci, cji, pi)).join("")}
-      <button class="btn-add-dashed" onclick="agregarPieza(${ci}, ${cji}, 'activa')" style="margin-top: 4px;">+ Pieza activa</button>
-      <button class="btn-add-dashed" onclick="agregarPieza(${ci}, ${cji}, 'reserva')" style="margin-top: 4px;">+ Pieza de reserva</button>
+      <div class="mini-label" style="margin-top: 10px;">Piezas · ${conj.piezas.length}</div>
+      ${conj.piezas.map((p, pi) => renderPiezaDidactica(p, ci, cji, pi)).join("")}
+      <div class="pieza-add-row">
+        <button class="btn-add-dashed" onclick="agregarPieza(${ci}, ${cji}, 'activa')">+ Pieza activa</button>
+        <button class="btn-add-dashed btn-reserva" onclick="agregarPieza(${ci}, ${cji}, 'reserva')">+ Pieza de reserva</button>
+      </div>
     </div>
   `;
 }
-
 function onChangePublico(ci, cji, valor) {
   state.campanas[ci].conjuntos[cji].publico = valor;
   if (valor !== "__custom__") state.campanas[ci].conjuntos[cji].publicoCustom = "";
   render();
 }
 
-function renderPieza(p, ci, cji, pi) {
+// PIEZA DIDÁCTICA con 2 sub-pasos (v3.6 · reducido)
+function renderPiezaDidactica(p, ci, cji, pi) {
   const esReserva = p.estado === "reserva";
+  const c = p._customs || {};
+
+  // Sub-paso 1 · Esencial: modelo + tipoPieza + trafico + angulo + conciencia + motivo + narrativa
+  const s1done = p.modelo && p.tipoPieza && p.trafico && p.angulo && p.conciencia && p.motivo && p.narrativa;
+  // Sub-paso 2 · Formato y copy: estructuraCopy + formato (+ duracion si video, slides si carrusel)
+  const esVideo = p.tipoPieza && p.tipoPieza.toLowerCase().includes("video");
+  const esCarrusel = p.tipoPieza === "Carrusel";
+  const s2done = p.estructuraCopy && p.formato && (esVideo ? p.duracion : true) && (esCarrusel ? p.carruselSlides : true);
+
+  // Normalizar subpaso a rango 1-2
+  if (p.subpaso > 2) p.subpaso = 2;
+  if (!p.subpaso) p.subpaso = 1;
+
+  // Pills resumen arriba
+  const pills = [];
+  if (p.modelo) pills.push(`Modelo: <strong>${escapeHTML(p.modelo === "__custom__" ? c.modelo || "(custom)" : p.modelo)}</strong>`);
+  if (p.tipoPieza) pills.push(`Tipo: <strong>${escapeHTML(p.tipoPieza === "__custom__" ? c.tipoPieza || "(custom)" : p.tipoPieza)}</strong>`);
+  if (p.formato) pills.push(`Formato: <strong>${escapeHTML(p.formato === "__custom__" ? c.formato || "(custom)" : p.formato)}</strong>`);
+  if (p.duracion) pills.push(`${p.duracion}`);
+  if (p.trafico) pills.push(`${escapeHTML(p.trafico === "__custom__" ? c.trafico || "" : p.trafico)}`);
+  if (p.angulo) pills.push(`<strong>${escapeHTML(p.angulo === "__custom__" ? c.angulo || "" : p.angulo)}</strong>`);
+  if (p.estructuraCopy) pills.push(`<strong>${escapeHTML(p.estructuraCopy)}</strong>`);
+
   return `
-    <div class="pieza-card ${esReserva ? "reserva" : ""}">
+    <div class="pieza-card ${esReserva ? 'reserva' : ''}">
       <div class="pieza-header">
-        <div class="pieza-title">Pieza ${pi + 1} · ${p.id}</div>
+        <div class="pieza-title">
+          🎬 Pieza ${pi + 1} · ${p.id}
+        </div>
         <div style="display: flex; gap: 6px; align-items: center;">
-          <span class="pieza-badge ${esReserva ? "reserva" : "activa"}">${esReserva ? "Reserva" : "Activa"}</span>
+          <span class="pieza-badge ${esReserva ? 'reserva' : 'activa'}">${esReserva ? 'Reserva' : 'Activa'}</span>
           <button class="btn-link btn-danger" onclick="eliminarPieza(${ci}, ${cji}, ${pi})">×</button>
         </div>
       </div>
 
-      <div class="row-2">
-        <div>
-          <div class="mini-label">Modelo</div>
-          ${selectPlaceholder("Modelo", state.modelosSeleccionados, p.modelo, `updatePiezaField(${ci}, ${cji}, ${pi}, 'modelo', this.value)`)}
-          ${p.modelo === "__custom__" ? renderCustomInput("Escribe el modelo", p._customs.modelo, ci, cji, pi, 'modelo') : ""}
-        </div>
-        <div>
-          <div class="mini-label">Tipo de pieza</div>
-          ${selectPlaceholder("Tipo de pieza", getAllTiposPieza(), p.tipoPieza, `updatePiezaField(${ci}, ${cji}, ${pi}, 'tipoPieza', this.value)`)}
-          ${p.tipoPieza === "__custom__" ? renderCustomInput("Escribe el tipo", p._customs.tipoPieza, ci, cji, pi, 'tipoPieza') : ""}
-        </div>
+      <div class="pieza-subtabs">
+        <div class="pieza-subtab ${p.subpaso === 1 ? 'active' : ''} ${s1done ? 'done' : ''}" onclick="setSubpaso(${ci},${cji},${pi},1)">1 · Esencial</div>
+        <div class="pieza-subtab ${p.subpaso === 2 ? 'active' : ''} ${s2done ? 'done' : ''}" onclick="setSubpaso(${ci},${cji},${pi},2)">2 · Formato y copy</div>
       </div>
 
-      ${p.tipoPieza === "Carrusel" ? `
-        <div class="row-2">
-          <div>
-            <div class="mini-label">Nº de slides</div>
-            <input type="number" class="mini-input" min="2" max="10"
-              value="${p.carruselSlides}"
-              oninput="state.campanas[${ci}].conjuntos[${cji}].piezas[${pi}].carruselSlides = parseInt(this.value) || 5">
-          </div>
-          <div></div>
-        </div>
-      ` : ""}
+      ${pills.length > 0 ? `<div class="pieza-pill-strip">${pills.map(p => `<span class="pieza-pill">${p}</span>`).join("")}</div>` : ''}
 
-      <div class="row-2">
-        <div>
-          <div class="mini-label">Formato / Medidas</div>
-          ${selectPlaceholder("Formato", FORMATOS, p.formato, `updatePiezaField(${ci}, ${cji}, ${pi}, 'formato', this.value)`)}
-          ${p.formato === "__custom__" ? renderCustomInput("Ej: 16:9", p._customs.formato, ci, cji, pi, 'formato') : ""}
-        </div>
-        <div>
-          <div class="mini-label">Ángulo</div>
-          ${selectPlaceholder("Ángulo", getAllAngulos(), p.angulo, `updatePiezaField(${ci}, ${cji}, ${pi}, 'angulo', this.value)`)}
-          ${p.angulo === "__custom__" ? renderCustomInput("Escribe el ángulo", p._customs.angulo, ci, cji, pi, 'angulo') : ""}
-        </div>
+      ${renderSubpaso(p, ci, cji, pi)}
+
+      <div class="pieza-nav">
+        <button class="pieza-nav-btn pieza-nav-sec" onclick="navSubpaso(${ci},${cji},${pi},-1)" ${p.subpaso <= 1 ? 'disabled' : ''}>← Atrás</button>
+        <button class="pieza-nav-btn pieza-nav-pri" onclick="navSubpaso(${ci},${cji},${pi},1)" ${p.subpaso >= 2 ? 'style="visibility:hidden"' : ''}>Siguiente →</button>
       </div>
-
-      <div class="row-2">
-        <div>
-          <div class="mini-label">Tráfico</div>
-          ${selectPlaceholder("Tráfico", TIPOS_TRAFICO, p.trafico, `updatePiezaField(${ci}, ${cji}, ${pi}, 'trafico', this.value)`)}
-          ${p.trafico === "__custom__" ? renderCustomInput("Escribe", p._customs.trafico, ci, cji, pi, 'trafico') : ""}
-        </div>
-        <div>
-          <div class="mini-label">Conciencia</div>
-          ${selectPlaceholder("Conciencia", NIVELES_CONCIENCIA, p.conciencia, `updatePiezaField(${ci}, ${cji}, ${pi}, 'conciencia', this.value)`)}
-          ${p.conciencia === "__custom__" ? renderCustomInput("Escribe", p._customs.conciencia, ci, cji, pi, 'conciencia') : ""}
-        </div>
-      </div>
-
-      <div class="row-2">
-        <div>
-          <div class="mini-label">Motivo</div>
-          ${selectPlaceholder("Motivo", MOTIVOS, p.motivo, `updatePiezaField(${ci}, ${cji}, ${pi}, 'motivo', this.value)`)}
-          ${p.motivo === "__custom__" ? renderCustomInput("Escribe", p._customs.motivo, ci, cji, pi, 'motivo') : ""}
-        </div>
-        <div>
-          <div class="mini-label">Narrativa</div>
-          ${selectPlaceholder("Narrativa", getAllNarrativas(), p.narrativa, `updatePiezaField(${ci}, ${cji}, ${pi}, 'narrativa', this.value)`)}
-          ${p.narrativa === "__custom__" ? renderCustomInput("Escribe", p._customs.narrativa, ci, cji, pi, 'narrativa') : ""}
-        </div>
-      </div>
-
-      <div class="row-2">
-        <div>
-          <div class="mini-label">Estructura copy</div>
-          <select class="mini-select" onchange="state.campanas[${ci}].conjuntos[${cji}].piezas[${pi}].estructuraCopy = this.value; render()">
-            <option value="">Estructura copy</option>
-            ${ESTRUCTURAS_COPY.map(e => `<option value="${e.nombre}" ${p.estructuraCopy === e.nombre ? "selected" : ""}>${e.nombre}</option>`).join("")}
-          </select>
-        </div>
-        <div></div>
-      </div>
-
-      ${p.estructuraCopy ? renderEstructuraPreview(p.estructuraCopy) : ""}
     </div>
   `;
 }
 
-function renderCustomInput(placeholder, value, ci, cji, pi, field) {
-  return `
-    <input type="text" class="custom-input-inline" placeholder="${placeholder}"
-      value="${escapeHTML(value || '')}"
-      oninput="state.campanas[${ci}].conjuntos[${cji}].piezas[${pi}]._customs.${field} = this.value">
-  `;
+function setSubpaso(ci, cji, pi, n) {
+  state.campanas[ci].conjuntos[cji].piezas[pi].subpaso = n;
+  render();
+}
+function navSubpaso(ci, cji, pi, delta) {
+  const p = state.campanas[ci].conjuntos[cji].piezas[pi];
+  p.subpaso = Math.max(1, Math.min(2, (p.subpaso || 1) + delta));
+  render();
+}
+
+function renderSubpaso(p, ci, cji, pi) {
+  const sub = p.subpaso || 1;
+  const c = p._customs || {};
+
+  if (sub === 1) {
+    // ESENCIAL: Modelo + Tipo + Tráfico + Ángulo + Conciencia + Motivo + Narrativa
+    return `
+      <div class="pieza-step-content">
+        <div class="pieza-step-header">
+          <div class="pieza-step-num">1</div>
+          <div class="pieza-step-info">
+            <div class="pieza-step-q">Esencial · ¿A quién le hablas y cómo?</div>
+            <div class="pieza-step-sub">Todo lo clave para el guion en una sola vista</div>
+          </div>
+        </div>
+
+        <div class="row-2">
+          <div>
+            <div class="mini-label">Modelo</div>
+            ${selectPlaceholder("Modelo", state.modelosSeleccionados, p.modelo, `updatePiezaField(${ci},${cji},${pi},'modelo',this.value)`)}
+            ${p.modelo === "__custom__" ? `<input type="text" class="custom-input-inline" placeholder="Escribe el modelo" value="${escapeHTML(c.modelo || '')}" oninput="state.campanas[${ci}].conjuntos[${cji}].piezas[${pi}]._customs.modelo = this.value; autoSave()">` : ""}
+          </div>
+          <div>
+            <div class="mini-label">Tipo de pieza</div>
+            ${selectPlaceholder("Tipo de pieza", getAllTiposPieza(), p.tipoPieza, `updatePiezaField(${ci},${cji},${pi},'tipoPieza',this.value)`)}
+            ${p.tipoPieza === "__custom__" ? `<input type="text" class="custom-input-inline" placeholder="Escribe el tipo" value="${escapeHTML(c.tipoPieza || '')}" oninput="state.campanas[${ci}].conjuntos[${cji}].piezas[${pi}]._customs.tipoPieza = this.value; autoSave()">` : ""}
+          </div>
+        </div>
+
+        <div class="mini-label" style="margin-top: 12px;">Tráfico</div>
+        <div class="cards-row-tight">
+          ${TIPOS_TRAFICO.map(t => `
+            <div class="option-card-compact ${p.trafico === t.nombre ? 'selected' : ''}" onclick="updatePiezaField(${ci},${cji},${pi},'trafico','${t.nombre}')">
+              <div class="opt-icon">${t.icon}</div>
+              <div class="opt-body">
+                <div class="opt-title">${t.nombre}</div>
+                <div class="opt-desc">${t.desc}</div>
+              </div>
+            </div>
+          `).join("")}
+        </div>
+
+        <div class="mini-label" style="margin-top: 10px;">Ángulo de venta</div>
+        ${selectPlaceholder("Ángulo", getAllAngulos(), p.angulo, `updatePiezaField(${ci},${cji},${pi},'angulo',this.value)`)}
+        ${p.angulo === "__custom__" ? `<input type="text" class="custom-input-inline" placeholder="Escribe el ángulo" value="${escapeHTML(c.angulo || '')}" oninput="state.campanas[${ci}].conjuntos[${cji}].piezas[${pi}]._customs.angulo = this.value; autoSave()">` : ""}
+
+        <div class="mini-label" style="margin-top: 12px;">Nivel de conciencia</div>
+        <div class="cards-row-tight">
+          ${NIVELES_CONCIENCIA.map(n => `
+            <div class="option-card-compact ${p.conciencia === n.nombre ? 'selected' : ''}" onclick="updatePiezaField(${ci},${cji},${pi},'conciencia','${n.nombre}')">
+              <div class="opt-icon">${n.icon}</div>
+              <div class="opt-body">
+                <div class="opt-title">${n.nombre}</div>
+                <div class="opt-desc">${n.desc}</div>
+              </div>
+            </div>
+          `).join("")}
+        </div>
+
+        <div class="mini-label" style="margin-top: 10px;">Motivo emocional</div>
+        <div class="cards-row-tight">
+          ${MOTIVOS.map(m => `
+            <div class="option-card-compact ${p.motivo === m.nombre ? 'selected' : ''}" onclick="updatePiezaField(${ci},${cji},${pi},'motivo','${m.nombre}')">
+              <div class="opt-icon">${m.icon}</div>
+              <div class="opt-body">
+                <div class="opt-title">${m.nombre}</div>
+                <div class="opt-desc">${m.desc}</div>
+              </div>
+            </div>
+          `).join("")}
+        </div>
+
+        <div class="mini-label" style="margin-top: 10px;">Narrativa / formato</div>
+        ${selectPlaceholder("Narrativa", getAllNarrativas(), p.narrativa, `updatePiezaField(${ci},${cji},${pi},'narrativa',this.value)`)}
+        ${p.narrativa === "__custom__" ? `<input type="text" class="custom-input-inline" placeholder="Escribe la narrativa" value="${escapeHTML(c.narrativa || '')}" oninput="state.campanas[${ci}].conjuntos[${cji}].piezas[${pi}]._customs.narrativa = this.value; autoSave()">` : ""}
+      </div>
+    `;
+  }
+
+  if (sub === 2) {
+    // FORMATO Y COPY: Estructura primero (guion), luego formato, duración, slides
+    const esVideo = p.tipoPieza && p.tipoPieza.toLowerCase().includes("video");
+    const esCarrusel = p.tipoPieza === "Carrusel";
+    return `
+      <div class="pieza-step-content">
+        <div class="pieza-step-header">
+          <div class="pieza-step-num">2</div>
+          <div class="pieza-step-info">
+            <div class="pieza-step-q">Formato y copy · ¿Cómo va el guion?</div>
+            <div class="pieza-step-sub">Estructura del guion + dimensiones</div>
+          </div>
+        </div>
+
+        <div class="mini-label">Estructura del guion y copy</div>
+        <div class="cards-row-tight">
+          ${ESTRUCTURAS_COPY.map(e => `
+            <div class="option-card-compact ${p.estructuraCopy === e.nombre ? 'selected' : ''}" onclick="updatePiezaField(${ci},${cji},${pi},'estructuraCopy','${e.nombre}')">
+              <div class="opt-icon">${e.icon}</div>
+              <div class="opt-body">
+                <div class="opt-title">${e.nombre}</div>
+                <div class="opt-desc">${e.desc}</div>
+              </div>
+            </div>
+          `).join("")}
+        </div>
+
+        <div class="mini-label" style="margin-top: 12px;">Formato / medidas</div>
+        <div class="cards-row-tight">
+          ${FORMATOS.map(f => `
+            <div class="option-card-compact ${p.formato === f ? 'selected' : ''}" onclick="updatePiezaField(${ci},${cji},${pi},'formato','${f}')">
+              <div class="opt-icon">${f === "9:16" ? "📱" : f === "1:1" ? "⬜" : "📐"}</div>
+              <div class="opt-body">
+                <div class="opt-title">${f}</div>
+                <div class="opt-desc">${f === "9:16" ? "Reels, Stories" : f === "1:1" ? "Feed cuadrado" : "Feed vertical"}</div>
+              </div>
+            </div>
+          `).join("")}
+          <div class="option-card-compact ${p.formato === "__custom__" ? 'selected' : ''}" onclick="updatePiezaField(${ci},${cji},${pi},'formato','__custom__')">
+            <div class="opt-icon">✏️</div>
+            <div class="opt-body">
+              <div class="opt-title">Otro</div>
+              <div class="opt-desc">Custom</div>
+            </div>
+          </div>
+        </div>
+        ${p.formato === "__custom__" ? `<input type="text" class="custom-input-inline" placeholder="Ej: 16:9" value="${escapeHTML(c.formato || '')}" oninput="state.campanas[${ci}].conjuntos[${cji}].piezas[${pi}]._customs.formato = this.value; autoSave()">` : ""}
+
+        ${esVideo ? `
+          <div class="mini-label" style="margin-top: 12px;">Duración del video</div>
+          <div class="chips">
+            ${["15s","20s","30s","45s","60s"].map(d => `<div class="chip ${p.duracion === d ? 'active' : ''}" onclick="updatePiezaField(${ci},${cji},${pi},'duracion','${d}')">${d}</div>`).join("")}
+          </div>
+        ` : ''}
+
+        ${esCarrusel ? `
+          <div class="mini-label" style="margin-top: 12px;">Nº de slides</div>
+          <input type="number" class="mini-input" min="2" max="10" style="max-width: 100px;"
+            value="${p.carruselSlides}"
+            oninput="state.campanas[${ci}].conjuntos[${cji}].piezas[${pi}].carruselSlides = parseInt(this.value) || 5; autoSave()">
+        ` : ''}
+      </div>
+    `;
+  }
 }
 
 function updatePiezaField(ci, cji, pi, field, valor) {
@@ -902,57 +1948,58 @@ function updatePiezaField(ci, cji, pi, field, valor) {
   render();
 }
 
-function renderEstructuraPreview(nombre) {
-  const e = ESTRUCTURAS_COPY.find(x => x.nombre === nombre);
-  if (!e) return "";
-  return `
-    <div style="margin-top: 8px; padding: 8px 10px; background: var(--white); border: 0.5px solid var(--border-light); border-radius: 6px;">
-      <div style="font-size: 9px; color: var(--carbon); letter-spacing: 1px; font-weight: 600;">${e.label}</div>
-    </div>
-  `;
-}
-
 function agregarCampana() {
-  state.campanas.push(newCampana(`Campaña ${state.campanas.length + 1}`));
-  render();
+  try {
+    state.campanas.push(newCampana(`Campaña ${state.campanas.length + 1}`));
+    render();
+  } catch(e) { console.error("agregarCampana:", e); }
 }
 function eliminarCampana(ci) {
-  if (confirm("¿Eliminar esta campaña completa?")) {
+  if (ci < 0 || ci >= state.campanas.length) return;
+  showConfirm("¿Eliminar esta campaña?", () => {
     state.campanas.splice(ci, 1);
     render();
-  }
+  });
 }
 function agregarConjunto(ci) {
-  state.campanas[ci].conjuntos.push(newConjunto());
-  render();
+  try {
+    if (ci < 0 || ci >= state.campanas.length) return;
+    const total = state.campanas[ci].conjuntos.length + 1;
+    state.campanas[ci].conjuntos.push(newConjunto(`Conjunto ${total}`, ""));
+    render();
+  } catch(e) { console.error("agregarConjunto:", e); }
 }
 function eliminarConjunto(ci, cji) {
-  if (confirm("¿Eliminar este conjunto y sus piezas?")) {
+  if (ci < 0 || ci >= state.campanas.length) return;
+  if (cji < 0 || cji >= state.campanas[ci].conjuntos.length) return;
+  showConfirm("¿Eliminar este conjunto?", () => {
     state.campanas[ci].conjuntos.splice(cji, 1);
     render();
-  }
+  });
 }
 function agregarPieza(ci, cji, estado) {
-  state.campanas[ci].conjuntos[cji].piezas.push(newPieza(estado));
-  render();
+  try {
+    state.campanas[ci].conjuntos[cji].piezas.push(newPieza(estado));
+    render();
+  } catch(e) { console.error("agregarPieza:", e); }
 }
 function eliminarPieza(ci, cji, pi) {
-  state.campanas[ci].conjuntos[cji].piezas.splice(pi, 1);
-  render();
+  try {
+    state.campanas[ci].conjuntos[cji].piezas.splice(pi, 1);
+    render();
+  } catch(e) { console.error("eliminarPieza:", e); }
 }
 function duplicarPiezas(ci) {
   const camp = state.campanas[ci];
+  if (!camp || !camp.conjuntos.length) return;
   const piezasBase = camp.conjuntos[0].piezas;
-  if (!piezasBase.length) return alert("El conjunto 1 no tiene piezas para duplicar.");
-  if (!confirm(`¿Copiar las ${piezasBase.length} piezas del Conjunto 1 a los demás conjuntos?`)) return;
-  for (let i = 1; i < camp.conjuntos.length; i++) {
-    camp.conjuntos[i].piezas = piezasBase.map(p => ({
-      ...p,
-      id: "P" + Math.random().toString(36).substr(2, 5).toUpperCase(),
-      _customs: {...(p._customs || {})}
-    }));
-  }
-  render();
+  if (!piezasBase.length) { alert("El conjunto 1 no tiene piezas."); return; }
+  showConfirm(`¿Copiar las ${piezasBase.length} piezas del Conjunto 1 a los demás?`, () => {
+    for (let i = 1; i < camp.conjuntos.length; i++) {
+      camp.conjuntos[i].piezas = piezasBase.map(p => ({ ...p, id: "P" + Math.random().toString(36).substr(2, 5).toUpperCase(), _customs: { ...(p._customs || {}) } }));
+    }
+    render();
+  });
 }
 function renderResumen() {
   let totalCamp = state.campanas.length;
@@ -965,11 +2012,7 @@ function renderResumen() {
       totalReserva += cj.piezas.filter(p => p.estado === "reserva").length;
     });
   });
-  return `
-    <div class="summary">
-      <strong>Resumen:</strong> ${totalCamp} campaña${totalCamp!==1?"s":""} · ${totalConj} conjunto${totalConj!==1?"s":""} · ${totalPiezas} pieza${totalPiezas!==1?"s":""} (${totalActivas} activas + ${totalReserva} reserva) · Presupuesto: ${state.tipoPresupuesto}
-    </div>
-  `;
+  return `<div class="summary"><strong>Resumen:</strong> ${totalCamp} campaña${totalCamp!==1?"s":""} · ${totalConj} conjunto${totalConj!==1?"s":""} · ${totalPiezas} pieza${totalPiezas!==1?"s":""} (${totalActivas} activas + ${totalReserva} reserva) · ${state.tipoPresupuesto}</div>`;
 }
 
 // ============================================
@@ -982,48 +2025,46 @@ function renderStep6() {
   const mensual = modo === "diario" && valor ? parseInt(valor) * 30 : valor;
   const isEvergreen = state.tipoCampana === "evergreen";
   return `
-    <div class="step-label">Paso 6 · Presupuesto</div>
-    <h2 class="step-question">Configura tu inversión</h2>
-    <p class="step-help">Tipo: <strong>${state.tipoPresupuesto}</strong> · ${state.tipoPresupuesto === 'ABO' ? 'Se distribuye por conjunto' : 'Meta optimiza el presupuesto global'}</p>
+    <div class="hero">
+      <div class="hero-emoji">💰</div>
+      <div class="hero-content">
+        <div class="hero-label">Presupuesto</div>
+        <div class="hero-title">Configura tu inversión</div>
+        <div class="hero-sub">Tipo: <strong>${state.tipoPresupuesto}</strong> · ${state.tipoPresupuesto === 'ABO' ? 'Distribuido por conjunto' : 'Meta optimiza el presupuesto global'}</div>
+      </div>
+    </div>
 
     <div class="toggle-group">
-      <button class="toggle-btn ${modo === 'diario' ? 'active' : ''}" onclick="state.presupuestoModo='diario'; render()">Ingresar diario</button>
-      <button class="toggle-btn ${modo === 'mensual' ? 'active' : ''}" onclick="state.presupuestoModo='mensual'; render()">Ingresar mensual</button>
+      <button class="toggle-btn ${modo === 'diario' ? 'active' : ''}" onclick="state.presupuestoModo='diario'; render()">📅 Ingresar diario</button>
+      <button class="toggle-btn ${modo === 'mensual' ? 'active' : ''}" onclick="state.presupuestoModo='mensual'; render()">📆 Ingresar mensual</button>
     </div>
 
     <div class="field">
-      <label class="field-label">Presupuesto ${modo === 'diario' ? 'diario' : 'mensual'} (COP)</label>
+      <div class="field-label field-label-primary">Presupuesto ${modo === 'diario' ? 'diario' : 'mensual'} (COP)</div>
       <input type="text" class="input" placeholder="0"
         value="${formatMoney(valor)}"
-        oninput="state.presupuestoValor = parseMoney(this.value); this.value = formatMoney(state.presupuestoValor); updateCalculos();">
+        oninput="state.presupuestoValor = parseMoney(this.value); this.value = formatMoney(state.presupuestoValor); updateCalculos(); autoSave();">
     </div>
-
     <div class="summary" id="calculos">
       ${modo === 'mensual' ? `<strong>Diario equivalente:</strong> $${formatMoney(diario)} COP` : `<strong>Mensual equivalente:</strong> $${formatMoney(mensual)} COP`}
     </div>
 
     <div class="field" style="margin-top: 20px;">
-      <label class="field-label">Periodo</label>
+      <div class="field-label">Periodo</div>
       <div class="row-2">
         <div>
           <div class="mini-label">Fecha inicio</div>
-          <input type="date" class="input" style="padding: 10px 14px;"
-            value="${state.fechaInicio}"
-            oninput="state.fechaInicio = this.value">
+          <input type="date" class="input" style="padding: 10px 14px;" value="${state.fechaInicio}" oninput="state.fechaInicio = this.value; autoSave()">
         </div>
         <div>
           <div class="mini-label">Fecha fin ${state.sinFechaFin ? '(deshabilitada)' : ''}</div>
-          <input type="date" class="input" style="padding: 10px 14px;"
-            ${state.sinFechaFin ? "disabled" : ""}
-            value="${state.fechaFin}"
-            oninput="state.fechaFin = this.value">
+          <input type="date" class="input" style="padding: 10px 14px;" ${state.sinFechaFin ? "disabled" : ""} value="${state.fechaFin}" oninput="state.fechaFin = this.value; autoSave()">
         </div>
       </div>
       ${isEvergreen ? `
         <div class="checkbox-wrap">
-          <input type="checkbox" id="sinFechaFin" ${state.sinFechaFin ? "checked" : ""}
-            onchange="state.sinFechaFin = this.checked; if(this.checked) state.fechaFin=''; render()">
-          <label for="sinFechaFin">Sin fecha fin (campaña evergreen siempre activa)</label>
+          <input type="checkbox" id="sinFechaFin" ${state.sinFechaFin ? "checked" : ""} onchange="state.sinFechaFin = this.checked; if(this.checked) state.fechaFin=''; render()">
+          <label for="sinFechaFin">Sin fecha fin (evergreen siempre activa)</label>
         </div>
       ` : ""}
     </div>
@@ -1045,14 +2086,20 @@ function updateCalculos() {
 // ============================================
 function renderStep7() {
   return `
-    <div class="step-label">Paso 7 · Equipo</div>
-    <h2 class="step-question">Equipo responsable</h2>
-    <p class="step-help">Revisa o edita los emails del equipo asignado.</p>
+    <div class="hero">
+      <div class="hero-emoji">👥</div>
+      <div class="hero-content">
+        <div class="hero-label">Equipo</div>
+        <div class="hero-title">Equipo responsable</div>
+        <div class="hero-sub">Revisa o edita los emails del equipo asignado a esta campaña.</div>
+      </div>
+    </div>
+
     <div class="field">
       ${state.equipo.map((m, i) => `
         <div class="team-row">
-          <input type="text" placeholder="Rol" value="${escapeHTML(m.rol)}" oninput="state.equipo[${i}].rol = this.value">
-          <input type="email" placeholder="email@tennispremiumcol.com" value="${escapeHTML(m.email)}" oninput="state.equipo[${i}].email = this.value">
+          <input type="text" placeholder="Rol" value="${escapeHTML(m.rol)}" oninput="state.equipo[${i}].rol = this.value; autoSave()">
+          <input type="email" placeholder="email@tennispremiumcol.com" value="${escapeHTML(m.email)}" oninput="state.equipo[${i}].email = this.value; autoSave()">
           <button class="btn-link btn-danger" onclick="eliminarPersona(${i})" style="font-size: 18px; line-height: 1;">×</button>
         </div>
       `).join("")}
@@ -1069,9 +2116,14 @@ function eliminarPersona(i) { state.equipo.splice(i, 1); render(); }
 function renderPromptOutput() {
   const prompt = generarPromptMaestro();
   return `
-    <div class="step-label">Prompt Maestro</div>
-    <h2 class="step-question">Prompt listo para Claude Code</h2>
-    <p class="step-help">Cópialo y pégalo en Claude Code para que genere el brief Word profesional.</p>
+    <div class="hero">
+      <div class="hero-emoji">🎉</div>
+      <div class="hero-content">
+        <div class="hero-label">Prompt Maestro</div>
+        <div class="hero-title">¡Listo! Prompt para Claude Code</div>
+        <div class="hero-sub">Cópialo y pégalo en Claude Code para que genere el brief Word profesional.</div>
+      </div>
+    </div>
     <div class="prompt-output" id="promptOutput">${escapeHTML(prompt)}</div>
     <div class="action-buttons">
       <button class="btn btn-primary" onclick="copiarPrompt()">📋 Copiar prompt</button>
@@ -1081,9 +2133,7 @@ function renderPromptOutput() {
   `;
 }
 
-function val(piezaVal, customVal) {
-  return piezaVal === "__custom__" ? (customVal || "(sin especificar)") : (piezaVal || "(sin especificar)");
-}
+function val(piezaVal, customVal) { return piezaVal === "__custom__" ? (customVal || "(sin especificar)") : (piezaVal || "(sin especificar)"); }
 
 function generarPromptMaestro() {
   const fecha = new Date().toLocaleDateString('es-CO');
@@ -1095,6 +2145,7 @@ function generarPromptMaestro() {
     "2x1": "2x1 o combos",
     envio: "Envío gratis",
     financiacion: "Financiación destacada (Addi/Sistecrédito)",
+    "precio-plano": "Precio plano único para toda la tienda",
     otra: state.otraOferta
   };
   const ofertaDesc = ofertaMap[state.tipoOferta] || "No definida";
@@ -1103,10 +2154,8 @@ function generarPromptMaestro() {
   if (evento && evento.includes("Primatón")) {
     contextoEspecial = `
 CONTEXTO ESPECIAL · PRIMATÓN:
-La Primatón es una campaña de Serrano Group que aprovecha el pago legal de primas en Colombia
-(30 de junio y 20 de diciembre), cuando la gente tiene dinero extra disponible.
-Los ángulos deben conectar con: "ya tienes con qué, date el gusto", "aprovecha la prima antes
-de que se vaya", "sé inteligente con el dinero extra".
+La Primatón aprovecha el pago legal de primas en Colombia (30 junio y 20 diciembre).
+Los ángulos deben conectar con liquidez extra, darse el gusto merecido, aprovechar la prima.
 `;
   }
 
@@ -1116,17 +2165,21 @@ de que se vaya", "sé inteligente con el dinero extra".
     if (tp && (tp.toLowerCase().includes("video"))) hayVideos = true;
   })));
 
-  // Generar listado de modelos con precios
   let modelosConPrecios = state.modelosSeleccionados.map(m => {
     const precio = state.preciosModelos[m] || {};
+    const desc = (state.modelosDescripcion || {})[m] || "";
+    let linea = "";
     if (precio.antes || precio.ahora) {
       const antes = precio.antes ? `$${formatMoney(precio.antes)}` : "";
       const ahora = precio.ahora ? `$${formatMoney(precio.ahora)}` : "";
-      if (antes && ahora) return `- ${m}: ${ahora} (antes ${antes})`;
-      if (ahora) return `- ${m}: ${ahora}`;
-      return `- ${m}: ${antes}`;
+      if (antes && ahora) linea = `- ${m}: ${ahora} (antes ${antes})`;
+      else if (ahora) linea = `- ${m}: ${ahora}`;
+      else linea = `- ${m}: ${antes}`;
+    } else {
+      linea = `- ${m}: (sin precio definido)`;
     }
-    return `- ${m}: (sin precio definido)`;
+    if (desc.trim()) linea += `\n  · Descripción: ${desc.trim()}`;
+    return linea;
   }).join("\n");
 
   let prompt = `# BRIEF DE CAMPAÑA · SERRANO GROUP
@@ -1150,7 +2203,12 @@ de que se vaya", "sé inteligente con el dinero extra".
 
 ## 3 · OFERTA
 - Tipo: ${ofertaDesc}
-- Contexto: ${state.contextoOferta || "(No especificado)"}
+- Detalle de la oferta: ${state.contextoOferta || "(No especificado)"}
+- Métodos de pago: ${state.ofertaMetodosPago || "(No especificado)"}
+- Regalo incluido: ${state.ofertaRegalo || "(No aplica)"}
+- Garantía: ${state.ofertaGarantia || "(No especificada)"}
+- Cambios de producto: ${state.ofertaCambios || "(No especificados)"}
+- Envío: ${state.ofertaEnvio || "(No especificado)"}
 ${contextoEspecial}
 ## 4 · MODELOS DISPONIBLES CON PRECIOS
 ${modelosConPrecios}
@@ -1169,10 +2227,9 @@ ${modelosConPrecios}
       prompt += `- Público: ${publicoFinal || "(no definido)"}\n`;
       if (state.tipoPresupuesto === 'ABO') prompt += `- % presupuesto: ${conj.porcentaje}%\n`;
       prompt += `- Piezas: ${conj.piezas.length}\n\n`;
-
       conj.piezas.forEach((p, pi) => {
-        const c = p._customs || {};
-        const modeloFinal = val(p.modelo, c.modelo);
+        const cu = p._customs || {};
+        const modeloFinal = val(p.modelo, cu.modelo);
         const precio = state.preciosModelos[modeloFinal];
         let precioStr = "";
         if (precio && (precio.antes || precio.ahora)) {
@@ -1182,13 +2239,14 @@ ${modelosConPrecios}
         }
         prompt += `##### PIEZA ${pi + 1} · ${p.id} · ${p.estado.toUpperCase()}\n`;
         prompt += `- Modelo: ${modeloFinal}${precioStr}\n`;
-        prompt += `- Tipo de pieza: ${val(p.tipoPieza, c.tipoPieza)}${p.tipoPieza === "Carrusel" ? ` (${p.carruselSlides} slides)` : ""}\n`;
-        prompt += `- Formato / medidas: ${val(p.formato, c.formato)}\n`;
-        prompt += `- Ángulo: ${val(p.angulo, c.angulo)}\n`;
-        prompt += `- Tráfico: ${val(p.trafico, c.trafico)}\n`;
-        prompt += `- Nivel conciencia: ${val(p.conciencia, c.conciencia)}\n`;
-        prompt += `- Motivo: ${val(p.motivo, c.motivo)}\n`;
-        prompt += `- Narrativa: ${val(p.narrativa, c.narrativa)}\n`;
+        prompt += `- Tipo de pieza: ${val(p.tipoPieza, cu.tipoPieza)}${p.tipoPieza === "Carrusel" ? ` (${p.carruselSlides} slides)` : ""}\n`;
+        prompt += `- Formato / medidas: ${val(p.formato, cu.formato)}\n`;
+        if (p.duracion) prompt += `- Duración sugerida: ${p.duracion}\n`;
+        prompt += `- Ángulo: ${val(p.angulo, cu.angulo)}\n`;
+        prompt += `- Tráfico: ${val(p.trafico, cu.trafico)}\n`;
+        prompt += `- Nivel conciencia: ${val(p.conciencia, cu.conciencia)}\n`;
+        prompt += `- Motivo: ${val(p.motivo, cu.motivo)}\n`;
+        prompt += `- Narrativa: ${val(p.narrativa, cu.narrativa)}\n`;
         prompt += `- Estructura del copy: ${p.estructuraCopy || "(No especificada)"}\n\n`;
       });
     });
@@ -1199,7 +2257,7 @@ ${modelosConPrecios}
 - Modo: ${state.presupuestoModo}
 - Valor ${state.presupuestoModo}: $${formatMoney(state.presupuestoValor)} COP
 - Fecha inicio: ${state.fechaInicio || "No definida"}
-- Fecha fin: ${state.sinFechaFin ? "SIN FECHA FIN (evergreen siempre activa)" : state.fechaFin || "No definida"}
+- Fecha fin: ${state.sinFechaFin ? "SIN FECHA FIN (evergreen)" : state.fechaFin || "No definida"}
 
 ## 7 · EQUIPO
 ${state.equipo.filter(e => e.rol && e.email).map(e => `- ${e.rol}: ${e.email}`).join("\n")}
@@ -1212,59 +2270,208 @@ Actúa como el director creativo y copywriter senior de Serrano Group.
 
 ## FORMATO DE ENTREGA: DOCUMENTO WORD (.docx)
 
-Entrega el brief completo como un archivo Microsoft Word (.docx) con diseño profesional tipo reporte ejecutivo.
+Entrega el brief completo como un archivo Microsoft Word (.docx).
 
-ESTRUCTURA DEL WORD:
-1. Portada (logo Serrano Group + nombre campaña + fecha)
-2. Índice con 10 secciones numeradas
-3. Resumen ejecutivo (con tabla de datos clave)
-4. Contexto y objetivos
-5. Oferta comercial
-6. Público objetivo
-7. Insight y mensaje clave (con blockquote destacado)
-8. Propuesta de valor
-9. Tono y lenguaje
-10. Estructura Meta Ads (con tablas por campaña)
-11. Guiones y copys POR PIEZA (sección más extensa)
-12. Especificaciones técnicas finales
+# ═══════════════════════════════════════════════════════════
+# TEMPLATE FIJO DEL WORD · NO NEGOCIABLE
+# ═══════════════════════════════════════════════════════════
 
-DISEÑO DEL WORD:
-- Paleta Serrano Group: grafito #333333, carbón #4B4441, crema #FAFAF9, dorado #C8A47E
-- Tipografía Arial
-- Header en cada página: "SERRANO GROUP · CAMPAIGN BRIEF"
-- Footer con paginación "Pág. X de Y"
-- Tablas con bordes suaves color #D8D4D0
-- Celdas de encabezado con fondo crema
-- Blockquotes con barra lateral dorada izquierda
-- Separadores horizontales dorados entre secciones
+Esta estructura del Word debe ser EXACTAMENTE la misma en cada ejecución del brief.
+Solo varía el contenido creativo (guiones, copys, hooks). La ESTRUCTURA Y DISEÑO son fijos.
 
-POR CADA PIEZA el Word debe incluir TODOS estos 18 elementos:
+## ESPECIFICACIONES GLOBALES DEL WORD
 
-1. Tabla-resumen con los atributos:
-   - Modelo de zapato (con precio antes/ahora si está disponible)
+- Tamaño: US Letter (12240 × 15840 DXA)
+- Márgenes: 1 pulgada en todos los lados
+- Tipografía: Arial en todo el documento
+- Paleta obligatoria:
+  * Grafito principal: #333333
+  * Carbón: #4B4441
+  * Crema (fondos suaves): #FAFAF9
+  * Dorado Serrano (acentos): #C8A47E
+  * Verde salvia (copy box): #8FA68E
+  * Borde: #D8D4D0
+  * Plata (footers): #BBB4B1
+
+- Header (todas las páginas): "SERRANO GROUP · CAMPAIGN BRIEF" en color plata, letter-spacing 40, alineación derecha, 14pt.
+- Footer (todas las páginas): "[Nombre campaña]  ·  Pág. X de Y" centrado, color plata, borde superior sutil.
+
+## ESTRUCTURA DEL WORD · 12 SECCIONES EXACTAS
+
+### PÁGINA 1 · PORTADA
+1. Espaciado superior (before: 2400)
+2. Logo centrado (200×120 px). Si no hay, espacio equivalente.
+3. Texto "SERRANO GROUP" centrado, 20pt, color carbón, letter-spacing 80
+4. Línea dorada como separador
+5. Texto "CAMPAIGN BRIEF" centrado, 18pt, color plata, letter-spacing 60
+6. Espaciado (after: 1440)
+7. NOMBRE DE LA CAMPAÑA en 64pt bold, color grafito, centrado
+8. Subtítulo "Brief creativo · Guiones · Copy para Meta Ads" en 24pt, italic, color carbón
+9. Espaciado inferior (after: 2400)
+10. NOMBRE EMPRESA en 16pt bold, color dorado, letter-spacing 100, centrado
+11. "Generado el [fecha]" en 18pt, color plata, centrado
+12. Salto de página
+
+### PÁGINA 2 · ÍNDICE
+- Título "Contenido" en H1 (40pt bold)
+- Separador dorado horizontal
+- 10 líneas de índice con formato "  XX  ·  Nombre" en bold
+- Salto de página
+
+### PÁGINA 3+ · SECCIÓN 01 · RESUMEN EJECUTIVO
+- Label "SECCIÓN 01" en dorado 16pt bold uppercase letter-spacing 40
+- Título "Resumen ejecutivo" H1
+- Separador dorado
+- Párrafo descriptivo (~3 líneas)
+- Tabla 2 columnas (3120 + 6240 DXA) con 10 filas:
+  * Campaña / Tipo / Objetivo Meta / Presupuesto / Periodo / Campañas-Conjuntos-Piezas / Código / Modelos foco / Plus
+  * Columna izquierda: negrita + fondo crema
+- Salto de página
+
+### SECCIÓN 02 · CONTEXTO Y OBJETIVOS
+- Label + H1 + Separador dorado
+- H3 "Contexto de la campaña" + párrafo
+- H3 "Objetivo principal" + párrafo
+- H3 "KPIs a monitorear" + 6 bullets
+- Salto de página
+
+### SECCIÓN 03 · OFERTA COMERCIAL
+- Label + H1 + Separador dorado
+- H3 "La oferta" + párrafo corto
+- H3 "Qué incluye" + bullets
+- H3 "Condiciones importantes" + tabla 2 col (3120+6240)
+- H3 "Tabla de precios por modelo" + tabla 4 col (3120+2080+2080+2080) con encabezado en fondo grafito texto blanco
+- Salto de página
+
+### SECCIÓN 04 · PÚBLICO OBJETIVO
+- Label + H1 + Separador dorado
+- H3 "Perfil demográfico" + bullets
+- H3 "Perfil psicográfico" + bullets
+- H3 "Momento emocional clave" + párrafo
+- H3 "Segmentación Meta Ads" + tabla
+- Salto de página
+
+### SECCIÓN 05 · INSIGHT Y MENSAJE CLAVE
+- Label + H1 + Separador dorado
+- H3 "El insight estratégico" + párrafo
+- BLOCKQUOTE con barra lateral dorada #C8A47E, fondo crema, padding 240, texto en 24pt italic color carbón
+- H3 "Por qué funciona" + bullets
+- H3 "Mensajes centrales" + bullets
+- Salto de página
+
+### SECCIÓN 06 · PROPUESTA DE VALOR
+- Label + H1 + Separador dorado
+- Párrafo intro
+- H3 "Propuestas duras (funcionales)" + bullets
+- H3 "Propuestas blandas (emocionales)" + bullets
+- Salto de página
+
+### SECCIÓN 07 · TONO Y LENGUAJE
+- Label + H1 + Separador dorado
+- H3 "Tono general" + párrafo
+- H3 "Lenguaje que SÍ usamos" + bullets
+- H3 "Lenguaje que NO usamos" + bullets
+- H3 "Alternativas obligatorias" + párrafo + bullets
+- Salto de página
+
+### SECCIÓN 08 · ESTRUCTURA META ADS
+- Label + H1 + Separador dorado
+- H3 "Configuración general" + tabla
+- Por cada campaña:
+  * H3 "CAMPAÑA X: [nombre]"
+  * Párrafo pequeño italic
+  * Por cada conjunto: H3 + tabla con Público, Piezas, Modelos, Mix formatos, Ángulos
+- Salto de página
+
+### SECCIÓN 09 · GUIONES Y COPYS POR PIEZA
+**Esta sección DEBE contener POR CADA PIEZA los 18 elementos siguientes, en orden exacto:**
+
+Label "SECCIÓN 09" + H1 "Guiones y copys por pieza" + Separador dorado + párrafo italic intro.
+
+Por CADA PIEZA:
+
+1. H2 "PIEZA [ID] · [Modelo] · [Tipo] · [Duración si video]"
+
+2. H3 "Tabla de atributos" + tabla 2 columnas con 12 filas:
+   - Modelo (con precio antes/ahora si hay)
    - Tipo de pieza
    - Formato / medidas
-   - Ángulo de venta
+   - Ángulo
    - Tráfico
    - Nivel de conciencia
-   - Motivo emocional
+   - Motivo
    - Narrativa
-   - Estructura del copy (PAS/AIDA/FAB/BAB/4U/Storytelling)
-   - Duración del video (si aplica)
-   - Registro de voz usado
+   - Estructura del copy
+   - Duración (si aplica)
+   - Registro de voz asignado
    - Tipo de hook elegido
 
-2. Guion completo con tabla de timestamps (si es video)
-   O brief visual detallado (si es imagen estática/carrusel)
+3. H3 "Justificación del registro y hook" + 2 bullets
 
-3. Copy del ad (caja destacada con fondo crema):
-   - Primary Text (con estructura aplicada)
-   - Headline 1 (con conteo de caracteres verificado ≤ 27)
-   - Headline 2 (alternativa genuina, ≤ 27 caracteres)
-   - Descripción (una frase)
-   - CTA del botón (acorde al objetivo)
+4. H3 "📹 Guion del video" (o "🖼️ Brief visual" si imagen/carrusel)
 
-4. Checklist de verificaciones (12 puntos de control)
+5. Si video: tabla 2 columnas (1400+7960) con 4 filas de timestamps:
+   - HOOK (fondo dorado #C8A47E, color blanco, bold, texto descriptivo)
+   - Bloque 2 (fondo crema, siguiendo la estructura PAS/AIDA/etc.)
+   - Bloque 3 (fondo crema)
+   - CTA final (fondo grafito #333333, color blanco)
+   Cada celda debe tener párrafos múltiples con descripción visual + diálogo + overlays sugeridos.
+
+6. Si imagen/carrusel: tabla con brief visual (fondo, producto, jerarquía, paleta, etc.)
+
+7. H3 "Estructura [X] aplicada" + 3 bullets explicando cada elemento
+
+8. H3 "Indicaciones de producción" + bullets específicos según tipo
+
+9. H3 "📝 Copy del Ad (Meta Ads Manager)"
+
+10. Label "Primary Text:" en dorado bold
+
+11. CAJA CREMA con barra lateral verde salvia #8FA68E:
+    - Borde top/bottom: #D8D4D0 size 4
+    - Borde left: #8FA68E size 4
+    - Fondo: #FAFAF9
+    - Padding: 200-280
+    - Contener 4-6 párrafos del Primary Text con estructura aplicada
+
+12. Tabla de 3 columnas (2340+4680+2340) con encabezado fondo grafito texto blanco:
+    - Headline 1 + conteo de caracteres
+    - Headline 2 + conteo de caracteres (verificado ≤27)
+    - Descripción + "—"
+    - CTA botón (en bold) + "—"
+
+13. H3 "🔍 Checklist de verificaciones" + 12 bullets (con ✓):
+    ☐ Estructura aplicada en guion y copy
+    ☐ Registro distinto de piezas previas
+    ☐ Sin palabras prohibidas (original, AAA, importado, réplica)
+    ☐ Sin mencionar competidores
+    ☐ Cifras verificables
+    ☐ Precio real del cliente
+    ☐ Tiempos de entrega matizados
+    ☐ CTA corresponde al objetivo
+    ☐ Headlines ≤27 caracteres
+    ☐ Modismos coinciden con edad target
+    ☐ Ángulo reflejado en primeros segundos
+    ☐ Hook declarado y justificado
+
+14. Salto de página después de cada pieza
+
+### SECCIÓN 10 · ESPECIFICACIONES TÉCNICAS
+- Label + H1 + Separador dorado
+- H3 "Formatos de entrega" + tabla
+- H3 "Requisitos Meta Ads Manager" + bullets
+- H3 "Flujo de aprobación" + tabla
+- Separador dorado final
+- 2 líneas italic centradas: crédito generador + nombre campaña/empresa
+
+## INSTRUCCIÓN ABSOLUTA
+
+Esta estructura es NO NEGOCIABLE. Si una segunda ejecución del mismo prompt genera el Word, la ESTRUCTURA debe ser IDÉNTICA. Lo que puede y debe variar es:
+- El contenido creativo (guiones, copys, hooks específicos)
+- Las elecciones de registro de voz
+- Las descripciones visuales
+
+Pero NUNCA el orden, las tablas, los colores, los separadores, el header/footer ni la paleta.
 
 # ═══════════════════════════════════════════════════════════
 # MÓDULO DE REDACCIÓN PROFESIONAL
@@ -1272,46 +2479,45 @@ POR CADA PIEZA el Word debe incluir TODOS estos 18 elementos:
 
 ## REGLA ESTRUCTURAL OBLIGATORIA
 
-Cada pieza entregada debe contener DOS bloques separados y claramente etiquetados:
-1. GUION DE LA PIEZA (según formato: video, imagen estática, carrusel)
+Cada pieza contiene DOS bloques separados:
+1. GUION (video/imagen/carrusel)
 2. COPY DEL AD (Primary Text, Headlines, Descripción, CTA)
 
-AMBOS bloques deben seguir la misma estructura de copywriting indicada (PAS, AIDA, FAB, BAB, 4U o Storytelling).
-No mezclar estructuras dentro de una misma pieza.
+AMBOS siguen la misma estructura (PAS/AIDA/FAB/BAB/4U/Storytelling). No mezclar.
 
-Referencia obligatoria de estructuras:
-- PAS: Problema (dolor visible) → Agitación (consecuencias si no actúa) → Solución (producto + CTA)
-- AIDA: Atención (hook) → Interés (dato/promesa) → Deseo (beneficio emocional) → Acción (CTA)
-- FAB: Features (atributos) → Advantages (lo que permite) → Benefits (cómo mejora la vida)
-- BAB: Before (situación actual) → After (situación deseada) → Bridge (el producto es el puente)
+Referencia:
+- PAS: Problema → Agitación → Solución + CTA
+- AIDA: Atención → Interés → Deseo → Acción
+- FAB: Features → Advantages → Benefits
+- BAB: Before → After → Bridge
 - 4U: Útil + Urgente + Único + Específico
-- Storytelling: Personaje identificable + conflicto + transformación + moraleja/CTA
+- Storytelling: Personaje + conflicto + transformación + CTA
 
 ## DIVERSIFICACIÓN DE REGISTROS DE VOZ
 
 NO redactar todas las piezas con el mismo registro. Si hay 4+ piezas, asignar al menos 3 registros distintos:
 
-- Juvenil Gen Z (22-30): "literal", "no les miento", "la verdad", "chicas"
-- Coloquial colombiano cálido (30-50): "parce", "ve", "mija/mijo", "pa'", "ome"
-- Formal-cálido (35-60): Sin modismos, tono respetuoso, cercano, profesional
-- Neutro informativo: Factual, directo, con datos
-- Emotivo directo: Tono cálido sin slang, frases cortas, pausas dramáticas
-- Cómplice/amiga: "Sé que lo pensaste", "entre nos", "yo también estaba ahí"
+- Juvenil Gen Z (22-30)
+- Coloquial colombiano cálido (30-50)
+- Formal-cálido (35-60)
+- Neutro informativo
+- Emotivo directo
+- Cómplice/amiga
 
-Al inicio de cada pieza, etiqueta el registro y justifica en una línea.
+Etiquetar el registro al inicio de cada pieza y justificarlo.
 
 ## REGLAS LEGALES Y ÉTICAS (NUNCA VIOLAR)
 
-PROHIBIDO ABSOLUTO en copys y guiones:
+PROHIBIDO ABSOLUTO:
 ❌ "original", "originales"
 ❌ "triple A", "AAA"
 ❌ "importado", "importados"
 ❌ "réplica", "imitación", "copia", "fake"
-❌ Mencionar marcas competidoras directamente
-❌ Inventar cifras sociales ("93 clientes este mes", "miles de mamás felices")
-❌ Inventar reviews, testimonios o nombres de clientes
-❌ Prometer tiempos de entrega nacionales absolutos
-❌ Lenguaje que denigre al comprador ("no seas mal hijo", "deja de ser tacaño")
+❌ Mencionar marcas competidoras
+❌ Inventar cifras sociales
+❌ Inventar reviews o testimonios
+❌ Prometer tiempos nacionales absolutos
+❌ Denigrar al comprador
 
 USAR EN SU LUGAR:
 ✅ "calidad garantizada"
@@ -1320,179 +2526,134 @@ USAR EN SU LUGAR:
 ✅ "acabados cuidados"
 ✅ "garantía Tennispremium"
 ✅ "estándar premium"
-✅ "24-72h en ciudades principales" (con cobertura matizada)
+✅ "24-72h en ciudades principales"
 
 ## DIVERSIDAD OBLIGATORIA ENTRE PIEZAS
 
 Aunque varias piezas tengan el mismo ángulo o modelo, el enfoque, la voz, las palabras, las metáforas y los ejemplos DEBEN ser DIFERENTES.
 
 PROHIBIDO:
-- Repetir los mismos hooks entre piezas
-- Repetir las mismas frases de cierre
-- Repetir los mismos CTAs literales
-- Repetir la misma estructura de apertura
+- Repetir hooks entre piezas
+- Repetir frases de cierre
+- Repetir CTAs literales
+- Repetir estructura de apertura
 
 ## DURACIÓN DE VIDEOS
 ${hayVideos ? `
-Los videos deben VARIAR en duración entre piezas (15-60 segundos):
-- 15-20 segundos: Óptima para feed y Reels (priorizar cuando se dude)
-- 21-30 segundos: Útil para público frío que necesita contexto
-- 31-45 segundos: Solo si narrativa lo justifica
-- 46-60 segundos: Casos específicos (storytelling profundo)
+Los videos varían entre 15-60s según lo indicado en cada pieza:
+- 15-20s: Óptima para feed y Reels (priorizar cuando se dude)
+- 21-30s: Público frío que necesita contexto
+- 31-45s: Solo si narrativa lo justifica
+- 46-60s: Casos específicos (storytelling profundo)
 
 Principios:
-- Hook: máximo primer tercio del video
-- Re-enganche cada 7-10 segundos
-- Precio visible antes del 50% del tiempo total
+- Hook: máximo primer tercio
+- Re-enganche cada 7-10s
+- Precio visible antes del 50% del tiempo
 - CTA en el último 20%
 - Último frame estático con logo + CTA + oferta
 ` : '(No hay piezas de video en este brief)'}
 
 ## TIPOS DE HOOK (elegir según ángulo y público)
-
 1. Hook de producto
 2. Hook de problema
 3. Hook de pregunta directa
 4. Hook de declaración polémica
-5. Hook de estadística (solo si es verificable)
-6. Hook de escena cotidiana reconocible
+5. Hook de estadística (solo verificable)
+6. Hook de escena cotidiana
 7. Hook de resultado/transformación primero
-8. Hook de testimonio inmediato (para UGC)
+8. Hook de testimonio inmediato (UGC)
 9. Hook de contraste visual
 10. Hook de celebridad/referente
 11. Hook de pattern interrupt
-12. Hook de confesión/vulnerabilidad (para UGC)
+12. Hook de confesión/vulnerabilidad (UGC)
 13. Hook de lista numerada
 14. Hook de urgencia temporal
 15. Hook de objeción anticipada
 
-Al redactar, declara qué hook usas y justifica por qué ese hook para esa pieza.
+Declarar el hook elegido y justificar.
 
 ## ESTRUCTURA INTERNA SEGÚN ÁNGULO
+- Dolor: Problema → Agitación → Producto → Oferta → CTA
+- Beneficios: Producto en uso → Beneficio → Marca → Oferta → CTA
+- Prueba social: Testimonio → Producto → Más testimonios → Oferta → CTA
+- Aspiracional: Transformación → Producto como puente → Oferta → CTA
+- Confianza: Credencial → Producto → Explicación → Oferta → CTA
 
-- Ángulo Problema/Dolor: Problema → Agitación → Producto → Oferta → CTA
-- Ángulo Beneficios: Producto en uso → Beneficio visible → Por qué esta marca → Oferta → CTA
-- Ángulo Prueba social: Testimonio → Producto → Más testimonios → Oferta → CTA
-- Ángulo Aspiracional: Transformación → Producto como puente → Oferta → CTA
-- Ángulo Confianza: Credencial → Producto → Explicación → Oferta → CTA
+## REGLAS UGC
+- Guion es guía, NO script cerrado
+- Libertad del creador para reformular
+- 1 imperfección intencional (pausa, "emmm")
+- Precio NUNCA en voz del creador (va en overlay)
+- Grabar 9:16, luz natural
+- Adaptar registro al perfil demográfico real
 
-## REGLAS ESPECÍFICAS UGC
-- El guion es guía, NO script cerrado
-- Libertad para reformular con palabras propias
-- Incluir al menos UNA imperfección intencional (pausa, "emmm", corrección)
-- El precio NUNCA lo dice la voz del creador (va en overlay)
-- Grabar vertical 9:16, luz natural
-- Adaptar registro al perfil demográfico real del creador
-
-## REGLAS ESPECÍFICAS VIDEO IN-HOUSE ("Videos por nosotros")
-- SÍ puede y debe sonar producido
-- Beauty shots del producto, transiciones limpias, música profesional
-- La diferencia con UGC debe ser evidente en los primeros 3 segundos
-- Mayor control sobre iluminación, encuadre y ritmo
+## REGLAS VIDEO IN-HOUSE ("Videos por nosotros")
+- SÍ puede sonar producido
+- Beauty shots, transiciones limpias, música profesional
+- Diferencia vs UGC evidente en primeros 3s
+- Mayor control de iluminación y ritmo
 
 ## REGLAS IMAGEN ESTÁTICA
-- Máximo 5 bloques de información: hook, producto, precio, oferta, CTA
-- Mantener texto conciso (<20% área total)
-- Precio como segundo elemento de mayor jerarquía
+- Máximo 5 bloques: hook, producto, precio, oferta, CTA
+- Texto <20% área total (regla Meta)
+- Precio como 2do elemento de jerarquía
 - CTA como botón visible
-- Paleta limitada a 3 colores máximo
+- Paleta limitada a 3 colores
 
 ## REGLAS CARRUSELES
 - Slide 1: Hook fuerte que obligue a deslizar
-- Slides intermedios: Un solo mensaje, imagen y texto por slide
-- Slide final: CTA + precio + oferta
+- Intermedios: 1 mensaje, 1 imagen, 1 texto por slide
+- Final: CTA + precio + oferta
 - Máximo 3-5 slides
 
 ## REGLAS COPY DEL AD
 
 Primary Text:
-- Aplicar estructura elegida de forma explícita
+- Estructura aplicada explícitamente
 - Primera línea = hook (antes del "ver más")
-- Emojis con parsimonia (máx 1 cada 2-3 líneas)
-- Incluir: beneficio, precio, oferta, urgencia con fecha, CTA
-- Saltos de línea para legibilidad mobile
+- Emojis con parsimonia (máx 1 c/ 2-3 líneas)
+- Incluir: beneficio + precio + oferta + urgencia con fecha + CTA
+- Saltos de línea para mobile
 - Extensión ideal: 80-150 palabras
 
 Headlines (1 y 2):
 - MÁXIMO 27 caracteres (contar explícitamente)
 - H1: beneficio principal o precio
-- H2: genuinamente distinta (oferta, pago, urgencia)
-- Evitar frases vacías como "la mejor opción"
+- H2: genuinamente distinta
+- Evitar "la mejor opción", "calidad insuperable"
 
-CTA del botón según objetivo:
+CTA según objetivo:
 - Ventas → "Comprar ahora", "Pedir ahora"
 - Tráfico → "Más información", "Ver más"
 - Mensajes → "Enviar mensaje", "Escribir"
 - Leads → "Registrarse", "Obtener oferta"
 
-## VERIFICACIONES FINALES POR PIEZA
+## 12 VERIFICACIONES FINALES POR PIEZA
 
 Antes de cerrar cada pieza, revisar:
 ☐ Estructura declarada se cumple en guion Y copy
 ☐ Registro de voz distinto de piezas previas
-☐ Sin palabras prohibidas (original, réplica, AAA, importado)
+☐ Sin palabras prohibidas
 ☐ Sin mencionar competidores
-☐ Cifras verificables (no inventadas)
-☐ Precio real del cliente (no inventado)
-☐ Tiempos de entrega matizados por cobertura
+☐ Cifras verificables
+☐ Precio real del cliente
+☐ Tiempos matizados
 ☐ CTA corresponde al objetivo
-☐ Headlines ≤ 27 caracteres (verificado contando)
-☐ Modismos coinciden con edad del target
-☐ Ángulo se refleja en primeros segundos
+☐ Headlines ≤27 caracteres
+☐ Modismos coinciden con edad target
+☐ Ángulo en primeros segundos
 ☐ Hook declarado y justificado
 
-## FORMATO FINAL DE ENTREGA POR PIEZA
-
-Para cada pieza usar este formato en el Word:
-
-━━━ PIEZA [ID] · [Modelo/Producto] ━━━
-
-Tabla de atributos:
-| Modelo      | [modelo + precio]        |
-| Tipo pieza  | [tipo]                   |
-| Formato     | [9:16/1:1/4:5]          |
-| Ángulo      | [ángulo]                 |
-| Tráfico     | [frío/tibio/caliente]    |
-| Conciencia  | [nivel Schwartz]         |
-| Motivo      | [emocional/racional/social] |
-| Narrativa   | [narrativa]              |
-| Estructura  | [PAS/AIDA/FAB/BAB/4U/Storytelling] |
-| Duración    | [15-60s, solo si video]  |
-| Registro    | [registro de voz]        |
-| Hook        | [tipo de hook]           |
-
-📹 GUION ([formato])
-[Guion con timestamps + tono + ritmo + elementos visuales]
-
-Estructura aplicada:
-- [Elemento 1]: [cómo se manifiesta]
-- [Elemento 2]: [cómo se manifiesta]
-- [Elemento 3]: [cómo se manifiesta]
-
-📝 COPY DEL AD (Meta Ads Manager)
-
-Primary Text:
-[Cuerpo con estructura aplicada]
-
-Tabla:
-| Campo       | Texto               | Caracteres |
-| Headline 1  | [texto]             | [N]/27     |
-| Headline 2  | [texto]             | [N]/27     |
-| Descripción | [una frase]         | -          |
-| CTA botón   | [texto botón]       | -          |
-
-🔍 Verificaciones: [checklist completo]
-
 ## PRINCIPIOS GENERALES
-
-- Una pieza = una idea. No intentar decir todo
+- Una pieza = una idea
 - Mostrar, no contar
-- Producto es el protagonista en Ventas; personaje lo es en Reconocimiento
-- Especificidad vende, genericidad no
+- Producto protagonista en Ventas
+- Especificidad vende
 - Tono colombiano natural ≠ slang forzado
-- Cada pieza debe sobrevivir sin las otras
+- Cada pieza sobrevive sola
 
-IMPORTANTE: Entrega TODO en un solo documento Word (.docx) con el diseño profesional especificado.
+IMPORTANTE: Entrega TODO en un solo Word (.docx) siguiendo la estructura fija especificada arriba.
 
 Empieza el trabajo.
 `;
@@ -1508,11 +2669,8 @@ function copiarPrompt() {
     setTimeout(() => s.classList.remove("visible"), 2000);
   }).catch(() => {
     const t = document.createElement("textarea");
-    t.value = prompt;
-    document.body.appendChild(t);
-    t.select();
-    document.execCommand("copy");
-    document.body.removeChild(t);
+    t.value = prompt; document.body.appendChild(t); t.select();
+    document.execCommand("copy"); document.body.removeChild(t);
     alert("Prompt copiado ✓");
   });
 }
@@ -1523,9 +2681,7 @@ function descargarPrompt() {
   const blob = new Blob([prompt], { type: "text/plain;charset=utf-8" });
   const url = URL.createObjectURL(blob);
   const a = document.createElement("a");
-  a.href = url;
-  a.download = `${fecha}_${nombre}_serrano_brief.txt`;
-  a.click();
+  a.href = url; a.download = `${fecha}_${nombre}_serrano_brief.txt`; a.click();
   URL.revokeObjectURL(url);
 }
 function nuevoBrief() {
@@ -1539,27 +2695,80 @@ function nuevoBrief() {
 function validarPaso(paso) {
   if (paso === 1 && !state.empresa.trim()) return "Ingresa el nombre de la empresa";
   if (paso === 2) {
-    if (!state.nombreCampana.trim()) return "Ingresa el nombre de la campaña";
     if (!state.tipoCampana) return "Selecciona evergreen o estacional";
-    if (state.tipoCampana === "estacional" && !state.eventoEstacional) return "Selecciona un evento estacional";
-    if (state.eventoEstacional === "__custom__" && !state.eventoCustom.trim()) return "Escribe el evento custom";
+    if (state.tipoCampana === "estacional") {
+      if (!state.eventoEstacional) return "Selecciona un evento estacional";
+      if (state.eventoEstacional === "__custom__" && !state.eventoCustom.trim()) return "Escribe el nombre del evento custom";
+    }
+    if (!state.nombreCampana.trim()) return "Ingresa el nombre de la campaña";
   }
-  if (paso === 3 && !state.tipoOferta) return "Selecciona un tipo de oferta";
-  if (paso === 4 && state.modelosSeleccionados.length === 0) return "Selecciona al menos un modelo";
+  if (paso === 3) {
+    if (!state.tipoOferta) return "Selecciona un tipo de oferta";
+    if (!state.contextoOferta.trim()) return "Detalla tu oferta";
+  }
+  if (paso === 4) {
+    if (state.modelosSeleccionados.length === 0) return "Selecciona al menos un modelo";
+    // Validar descripción por modelo (recomendado pero no obligatorio - solo avisar si falta alguno)
+  }
   if (paso === 5) {
-    if (!state.objetivo) return "Selecciona el objetivo del brief";
+    if (!state.objetivo) return "Selecciona el objetivo de la campaña";
     if (!state.tipoPresupuesto) return "Selecciona ABO o CBO";
     let totalPiezas = 0;
     state.campanas.forEach(c => c.conjuntos.forEach(cj => totalPiezas += cj.piezas.length));
-    if (totalPiezas === 0) return "Agrega al menos una pieza a algún conjunto";
-    // #11: Validar 100% en ABO
+    if (totalPiezas === 0) return "Crea la estructura o agrega al menos una pieza";
     if (state.tipoPresupuesto === "ABO") {
       for (let ci = 0; ci < state.campanas.length; ci++) {
         const camp = state.campanas[ci];
         let suma = 0;
         camp.conjuntos.forEach(cj => suma += (parseInt(cj.porcentaje) || 0));
-        if (suma !== 100) {
-          return `El % del presupuesto de la Campaña ${ci + 1} suma ${suma}% — debe sumar 100%`;
+        if (suma !== 100) return `El % del presupuesto de la Campaña ${ci + 1} suma ${suma}% — debe sumar 100%`;
+      }
+    }
+    // Validar conjuntos con público asignado
+    for (let ci = 0; ci < state.campanas.length; ci++) {
+      const camp = state.campanas[ci];
+      for (let cji = 0; cji < camp.conjuntos.length; cji++) {
+        const cj = camp.conjuntos[cji];
+        if (!cj.publico) return `Falta público en Campaña ${ci+1} · Conjunto ${cji+1}`;
+        if (cj.publico === "__custom__" && !cj.publicoCustom.trim()) return `Escribe el público custom de Campaña ${ci+1} · Conjunto ${cji+1}`;
+      }
+    }
+    // Validar cada pieza con todos los campos obligatorios llenos
+    for (let ci = 0; ci < state.campanas.length; ci++) {
+      const camp = state.campanas[ci];
+      for (let cji = 0; cji < camp.conjuntos.length; cji++) {
+        const cj = camp.conjuntos[cji];
+        for (let pi = 0; pi < cj.piezas.length; pi++) {
+          const p = cj.piezas[pi];
+          const faltantes = [];
+          if (!p.modelo) faltantes.push("modelo");
+          if (!p.tipoPieza) faltantes.push("tipo de pieza");
+          if (!p.trafico) faltantes.push("tráfico");
+          if (!p.angulo) faltantes.push("ángulo");
+          if (!p.conciencia) faltantes.push("conciencia");
+          if (!p.motivo) faltantes.push("motivo");
+          if (!p.narrativa) faltantes.push("narrativa");
+          if (!p.estructuraCopy) faltantes.push("estructura de copy");
+          if (!p.formato) faltantes.push("formato");
+          const esVideo = p.tipoPieza && p.tipoPieza.toLowerCase().includes("video");
+          if (esVideo && !p.duracion) faltantes.push("duración");
+          if (faltantes.length > 0) {
+            return `Campaña ${ci+1} · Conjunto ${cji+1} · Pieza ${pi+1} está incompleta — falta: ${faltantes.join(", ")}`;
+          }
+        }
+      }
+    }
+    // Aviso de piezas de reserva (no bloquea, solo avisa una vez)
+    for (let ci = 0; ci < state.campanas.length; ci++) {
+      const camp = state.campanas[ci];
+      for (let cji = 0; cji < camp.conjuntos.length; cji++) {
+        const cj = camp.conjuntos[cji];
+        const hayReserva = cj.piezas.some(p => p.estado === "reserva");
+        if (!hayReserva) {
+          if (!state._avisoReservaMostrado) {
+            state._avisoReservaMostrado = true;
+            return `__WARN__Campaña ${ci+1} · Conjunto ${cji+1} no tiene pieza de reserva. Se recomienda al menos 1 para rotar cuando la activa se desgaste.\n\nToca "Continuar" de nuevo para avanzar de todos modos, o agrega una pieza de reserva.`;
+          }
         }
       }
     }
@@ -1574,7 +2783,15 @@ function validarPaso(paso) {
 
 function goNext() {
   const err = validarPaso(state.currentStep);
-  if (err) { alert("⚠ " + err); return; }
+  if (err) {
+    if (err.startsWith("__WARN__")) {
+      alert("⚠ " + err.substring(8));
+      return;
+    }
+    alert("⚠ " + err);
+    return;
+  }
+  state._avisoReservaMostrado = false;
   if (state.currentStep < 7) state.currentStep++;
   else if (state.currentStep === 7) state.currentStep = 8;
   render();
